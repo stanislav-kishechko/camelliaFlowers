@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Клієнти - Camellia Flowers CRM{% endblock %}
+
+{% block mobile_title %}Клієнти{% endblock %}
+
+{% block content %}
+<div class="p-4 md:p-8">
+    <!-- Messages -->
+    {% if messages %}
+    <div class="mb-6 space-y-2">
+        {% for message in messages %}
+        <div role="alert" class="{% if message.tags == 'success' %}bg-green-50 text-green-800 border-green-200{% elif message.tags == 'error' %}bg-red-50 text-red-800 border-red-200{% else %}bg-blue-50 text-blue-800 border-blue-200{% endif %} border rounded-lg p-4 flex items-center justify-between transition-opacity">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 ml-4">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Header -->
+    <div class="mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Клієнти</h2>
+                <p class="text-gray-500 mt-1 text-sm md:text-base">Управління базою клієнтів</p>
+            </div>
+            <button onclick="openNewClientModal()" class="px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-lg font-medium transition flex items-center justify-center space-x-2 text-sm md:text-base shadow-lg shadow-pink-500/30">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <span>Додати клієнта</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-xl md:text-2xl">👥</span>
+                </div>
+                <div>
+                    <p class="text-xs md:text-sm text-gray-500">Всього</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ total_clients }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-xl md:text-2xl">✨</span>
+                </div>
+                <div>
+                    <p class="text-xs md:text-sm text-gray-500">Активні</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ active_clients }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-xl md:text-2xl">🎯</span>
+                </div>
+                <div>
+                    <p class="text-xs md:text-sm text-gray-500">За місяць</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">{{ new_clients_month }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-xl md:text-2xl">💰</span>
+                </div>
+                <div>
+                    <p class="text-xs md:text-sm text-gray-500">Середня</p>
+                    <p class="text-xl md:text-2xl font-bold text-gray-800">₴{{ average_order }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+        <form method="get" id="clientSearchForm" class="p-4">
+            <div class="flex flex-col lg:flex-row gap-3">
+                <!-- Search Input -->
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input type="text"
+                           name="search"
+                           id="searchInput"
+                           value="{{ search_query }}"
+                           placeholder="Пошук клієнта..."
+                           class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm transition"
+                           oninput="debounceSearch()">
+                </div>
+
+                <!-- Type Filter -->
+                <div class="relative">
+                    <select name="type"
+                            id="typeFilter"
+                            onchange="autoSubmitForm()"
+                            class="w-full lg:w-auto pl-4 pr-10 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent appearance-none bg-white text-sm cursor-pointer transition hover:border-gray-300">
+                        <option value="all" {% if client_type == 'all' %}selected{% endif %}>Всі клієнти</option>
+                        <option value="active" {% if client_type == 'active' %}selected{% endif %}>Активні</option>
+                        <option value="vip" {% if client_type == 'vip' %}selected{% endif %}>VIP клієнти</option>
+                        <option value="new" {% if client_type == 'new' %}selected{% endif %}>Нові клієнти</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Status Filter (optional) -->
+                <div class="relative">
+                    <select name="status"
+                            id="statusFilter"
+                            onchange="autoSubmitForm()"
+                            class="w-full lg:w-auto pl-4 pr-10 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent appearance-none bg-white text-sm cursor-pointer transition hover:border-gray-300">
+                        <option value="all">Всі статуси</option>
+                        <option value="active">Активні</option>
+                        <option value="inactive">Неактивні</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Sort Filter -->
+                <div class="relative">
+                    <select name="sort"
+                            id="sortFilter"
+                            onchange="autoSubmitForm()"
+                            class="w-full lg:w-auto pl-4 pr-10 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent appearance-none bg-white text-sm cursor-pointer transition hover:border-gray-300">
+                        <option value="date" {% if sort_by == 'date' %}selected{% endif %}>За назвою</option>
+                        <option value="orders" {% if sort_by == 'orders' %}selected{% endif %}>За замовленнями</option>
+                        <option value="spent" {% if sort_by == 'spent' %}selected{% endif %}>За сумою</option>
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>За алфавітом</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Clear Filters Button -->
+                {% if search_query or client_type != 'all' or sort_by != 'date' %}
+                <button type="button"
+                        onclick="clearFilters()"
+                        class="px-4 py-2.5 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition text-sm font-medium whitespace-nowrap">
+                    Очистити
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- Active Filters Display -->
+            {% if search_query or client_type != 'all' %}
+            <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
+                {% if search_query %}
+                <span class="inline-flex items-center px-3 py-1 bg-pink-50 text-pink-700 rounded-full text-xs font-medium">
+                    Пошук: "{{ search_query }}"
+                    <button type="button" onclick="clearSearch()" class="ml-2 hover:text-pink-900">×</button>
+                </span>
+                {% endif %}
+
+                {% if client_type != 'all' %}
+                <span class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                    Тип: {% if client_type == 'active' %}Активні{% elif client_type == 'vip' %}VIP{% elif client_type == 'new' %}Нові{% endif %}
+                    <button type="button" onclick="clearType()" class="ml-2 hover:text-blue-900">×</button>
+                </span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="hidden mb-4">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-center space-x-3">
+                <svg class="animate-spin h-5 w-5 text-pink-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-gray-600 text-sm">Завантаження...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6" id="clientsGrid">
+        {% for client in clients %}
+            {% include 'clients/partials/client_card_partial.html' %}
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <span class="text-6xl mb-4 block">👥</span>
+            <p class="text-gray-500 text-lg mb-4">
+                {% if search_query %}
+                    Нічого не знайдено за запитом "{{ search_query }}"
+                {% else %}
+                    Немає клієнтів
+                {% endif %}
+            </p>
+            {% if not search_query %}
+            <button onclick="openNewClientModal()" class="px-6 py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition">
+                Додати першого клієнта
+            </button>
+            {% else %}
+            <button onclick="clearFilters()" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg font-medium transition">
+                Очистити фільтри
+            </button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if clients.has_other_pages %}
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-gray-600">Показано {{ clients.start_index }}-{{ clients.end_index }} з {{ clients.paginator.count }} клієнтів</p>
+        <div class="flex space-x-2">
+            {% if clients.has_previous %}
+            <a href="?page={{ clients.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if client_type != 'all' %}&type={{ client_type }}{% endif %}{% if sort_by != 'date' %}&sort={{ sort_by }}{% endif %}" class="px-3 md:px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition text-sm">
+                Попередня
+            </a>
+            {% endif %}
+            <span class="px-3 md:px-4 py-2 bg-pink-500 text-white rounded-lg text-sm">{{ clients.number }}</span>
+            {% if clients.has_next %}
+            <a href="?page={{ clients.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if client_type != 'all' %}&type={{ client_type }}{% endif %}{% if sort_by != 'date' %}&sort={{ sort_by }}{% endif %}" class="px-3 md:px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition text-sm">
+                Наступна
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Include Modal Components -->
+{% include 'clients/partials/client_add_partial.html' %}
+{% include 'clients/partials/client_edit_partial.html' %}
+{% include 'clients/partials/client_delete_partial.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/client_modals.js' %}"></script>
+<script>
+    // Auto-submit form when filters change
+    function autoSubmitForm() {
+        document.getElementById('clientSearchForm').submit();
+    }
+
+    // Debounce search input
+    let searchTimeout;
+    function debounceSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            autoSubmitForm();
+        }, 500); // Wait 500ms after user stops typing
+    }
+
+    // Clear all filters
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('typeFilter').value = 'all';
+        document.getElementById('sortFilter').value = 'date';
+        autoSubmitForm();
+    }
+
+    // Clear search only
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        autoSubmitForm();
+    }
+
+    // Clear type filter only
+    function clearType() {
+        document.getElementById('typeFilter').value = 'all';
+        autoSubmitForm();
+    }
+
+    // Show loading indicator
+    document.getElementById('clientSearchForm').addEventListener('submit', function() {
+        document.getElementById('loadingIndicator').classList.remove('hidden');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Camellia Flowers - CRM{% endblock %}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Styles -->
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+  <style>
+      /* Desktop - sidebar always fully open, never collapses */
+      @media (min-width: 1024px) {
+          .sidebar {
+              width: 16rem; /* Always 16rem on desktop */
+          }
+
+          .main-content {
+              margin-left: 16rem; /* Always offset by sidebar width */
+          }
+      }
+
+      /* Mobile - slides in/out */
+      @media (max-width: 1023px) {
+          .sidebar {
+              width: 16rem;
+              transform: translateX(-100%);
+              transition: transform 0.3s ease;
+          }
+
+          .sidebar.mobile-open {
+              transform: translateX(0);
+          }
+      }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+
+<!-- Mobile Overlay -->
+<div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden"
+     onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<div id="sidebar"
+     class="sidebar fixed inset-y-0 left-0 bg-gradient-to-b from-pink-50 to-white border-r border-pink-100 z-40">
+  <div class="flex flex-col h-full">
+    <!-- Logo -->
+    <div class="p-6 border-b border-pink-100 flex items-center justify-between">
+      <div class="flex items-center space-x-3 overflow-hidden">
+        <div
+            class="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-500 rounded-xl flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-xl">🌸</span>
+        </div>
+        <div class="sidebar-content">
+          <h1 class="text-lg font-bold text-gray-800 whitespace-nowrap">Camellia Flowers</h1>
+          <p class="text-xs text-gray-500">CRM Система</p>
+        </div>
+      </div>
+      <!-- Collapse button removed - sidebar stays fully open on desktop -->
+      <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+      <a href="{% url 'dashboard:dashboard' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 {% if request.resolver_match.url_name == 'dashboard' %}bg-pink-100 text-pink-700{% else %}text-gray-600 hover:bg-pink-50{% endif %} rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">📊</span>
+        <span class="sidebar-content whitespace-nowrap">Дашборд</span>
+      </a>
+      <a href="{% url 'orders:orders' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 {% if request.resolver_match.url_name == 'orders' %}bg-pink-100 text-pink-700{% else %}text-gray-600 hover:bg-pink-50{% endif %} rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">📦</span>
+        <span class="sidebar-content whitespace-nowrap">Замовлення</span>
+      </a>
+      <a href="{% url 'clients:clients' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 {% if request.resolver_match.url_name == 'clients' %}bg-pink-100 text-pink-700{% else %}text-gray-600 hover:bg-pink-50{% endif %} rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">👥</span>
+        <span class="sidebar-content whitespace-nowrap">Клієнти</span>
+      </a>
+      <a href="{% url 'products:products' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 {% if request.resolver_match.url_name == 'products' %}bg-pink-100 text-pink-700{% else %}text-gray-600 hover:bg-pink-50{% endif %} rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">🌺</span>
+        <span class="sidebar-content whitespace-nowrap">Продукти</span>
+      </a>
+    </nav>
+
+    <!-- User Profile -->
+    <div class="p-4 border-t border-pink-100">
+      <a href="{% url 'accounts:profile' %}"
+         class="flex items-center space-x-3 px-4 py-3 hover:bg-pink-50 rounded-lg transition">
+        <div
+            class="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+          {{ request.user.first_name.0|default:"М" }}{{ request.user.last_name.0|default:"К" }}
+        </div>
+        <div class="sidebar-content flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-800 truncate">{{ request.user.get_full_name|default:"Менеджер" }}</p>
+          <p class="text-xs text-gray-500 truncate">{{ request.user.email|default:"manager@camellia.com" }}</p>
+        </div>
+      </a>
+      <a href="{% url 'logout' %}"
+         class="sidebar-content mt-2 block w-full px-4 py-2 text-sm text-center text-red-600 hover:bg-red-50 rounded-lg transition">
+        Вийти
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Header -->
+<div class="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-20">
+  <div class="flex items-center justify-between p-4">
+    <button onclick="toggleSidebar()" class="text-gray-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <h1 class="text-lg font-bold text-gray-800">{% block mobile_title %}Camellia
+      Flowers{% endblock %}</h1>
+    <div class="w-6"></div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div id="main-content" class="main-content pt-16 lg:pt-0">
+  {% block content %}{% endblock %}
+</div>
+
+<!-- Base Scripts -->
+<script src="{% static 'js/htmx.min.js' %}"></script>
+
+<script src="{% static 'js/main.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

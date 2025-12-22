@@ -1,0 +1,6 @@
+<div class="text-right">
+  <p class="text-xs text-gray-500">На складі</p>
+  <p class="text-sm font-semibold {% if product.stock > 10 %}text-gray-800{% elif product.stock > 0 %}text-yellow-600{% else %}text-red-600{% endif %}">
+    {{ product.stock }} шт
+  </p>
+</div>

@@ -1,0 +1,87 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+  <div class="p-4 md:p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="flex items-center space-x-3 flex-1 min-w-0">
+        <div class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center text-white font-bold text-base md:text-lg flex-shrink-0">
+          {{ client.initials }}
+        </div>
+        <div class="min-w-0 flex-1">
+          <h3 class="font-semibold text-gray-800 text-sm md:text-base truncate">{{ client.full_name }}</h3>
+          <span class="px-2 py-1 {% if client.is_vip %}bg-yellow-100 text-yellow-700{% else %}bg-green-100 text-green-700{% endif %} rounded-full text-xs font-medium inline-block mt-1">
+            {% if client.is_vip %}⭐ VIP{% else %}✨ Активний{% endif %}
+          </span>
+        </div>
+      </div>
+
+      <!-- Dropdown Menu -->
+      <div class="relative">
+        <button onclick="toggleClientDropdown({{ client.id }})" class="text-gray-400 hover:text-gray-600 p-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+          </svg>
+        </button>
+        <div id="client-dropdown-{{ client.id }}" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+          <a href="{% url 'clients:client_detail' client.id %}"
+             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">
+            👁️ Переглянути
+          </a>
+          <button onclick="openEditClientModal({{ client.id }}, '{{ client.first_name|escapejs }}', '{{ client.last_name|escapejs }}', '{{ client.phone|escapejs }}', '{{ client.email|default:''|escapejs }}', '{{ client.address|default:''|escapejs }}', '{{ client.city|default:''|escapejs }}', '{{ client.notes|default:''|escapejs }}', {{ client.is_vip|yesno:'true,false' }}, {{ client.is_active|yesno:'true,false' }}, {{ client.orders_count }}, {{ client.total_spent }}, '{{ client.created_at|date:'d.m.Y' }}')"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            ✏️ Редагувати
+          </button>
+          <form method="post" action="{% url 'clients:client_toggle_vip' client.id %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              {% if client.is_vip %}⭐ Зняти VIP{% else %}⭐ Зробити VIP{% endif %}
+            </button>
+          </form>
+          <button onclick="confirmDeleteClient({{ client.id }}, '{{ client.full_name|escapejs }}', '{{ client.phone|escapejs }}')"
+                  class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg">
+            🗑️ Видалити
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-2 mb-4">
+      <div class="flex items-center text-xs md:text-sm text-gray-600">
+        <span class="mr-2">📱</span>
+        <span class="truncate">{{ client.phone }}</span>
+      </div>
+      {% if client.email %}
+      <div class="flex items-center text-xs md:text-sm text-gray-600">
+        <span class="mr-2">📧</span>
+        <span class="truncate">{{ client.email }}</span>
+      </div>
+      {% endif %}
+      {% if client.city %}
+      <div class="flex items-center text-xs md:text-sm text-gray-600">
+        <span class="mr-2">📍</span>
+        <span>{{ client.city }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 mb-4 pt-4 border-t border-gray-100">
+      <div>
+        <p class="text-xs text-gray-500">Замовлень</p>
+        <p class="text-base md:text-lg font-bold text-gray-800">{{ client.orders_count }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500">На суму</p>
+        <p class="text-base md:text-lg font-bold text-pink-600">₴{{ client.total_spent }}</p>
+      </div>
+    </div>
+
+    <div class="flex space-x-2">
+      <a href="{% url 'clients:client_detail' client.id %}"
+         class="flex-1 px-3 md:px-4 py-2 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 font-medium transition text-xs md:text-sm text-center">
+        Переглянути
+      </a>
+      <a href="tel:{{ client.phone }}"
+         class="px-3 md:px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition text-sm md:text-base">
+        📞
+      </a>
+    </div>
+  </div>
+</div>

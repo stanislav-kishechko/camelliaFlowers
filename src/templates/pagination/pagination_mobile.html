@@ -1,0 +1,198 @@
+<!-- Mobile-Friendly Pagination Component -->
+{% if page_obj.has_other_pages %}
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+    <!-- Mobile View -->
+    <div class="flex lg:hidden flex-col space-y-3">
+      <!-- Page Info -->
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-600">
+          Сторінка <span
+            class="font-semibold text-gray-800">{{ page_obj.number }}</span> з {{ page_obj.paginator.num_pages }}
+        </span>
+        <span class="text-xs text-gray-500">
+          {{ page_obj.start_index }}-{{ page_obj.end_index }} з {{ page_obj.paginator.count }}
+        </span>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="flex items-center space-x-2">
+        {% if page_obj.has_previous %}
+          <a href="?page=
+              {{ page_obj.previous_page_number }}{% if query_params %}{{ query_params }}{% endif %}"
+             class="flex-1 flex items-center justify-center px-4 py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 19l-7-7 7-7"/>
+            </svg>
+            Назад
+          </a>
+        {% else %}
+          <button disabled
+                  class="flex-1 flex items-center justify-center px-4 py-2.5 rounded-lg border border-gray-100 text-gray-300 cursor-not-allowed text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 19l-7-7 7-7"/>
+            </svg>
+            Назад
+          </button>
+        {% endif %}
+
+        <div
+            class="flex items-center justify-center w-12 h-10 bg-gradient-to-br from-pink-500 to-pink-600 text-white font-semibold rounded-lg shadow-lg shadow-pink-500/30">
+          {{ page_obj.number }}
+        </div>
+
+        {% if page_obj.has_next %}
+          <a href="?page=
+              {{ page_obj.next_page_number }}{% if query_params %}{{ query_params }}{% endif %}"
+             class="flex-1 flex items-center justify-center px-4 py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
+            Далі
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        {% else %}
+          <button disabled
+                  class="flex-1 flex items-center justify-center px-4 py-2.5 rounded-lg border border-gray-100 text-gray-300 cursor-not-allowed text-sm">
+            Далі
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        {% endif %}
+      </div>
+
+      <!-- Quick Jump (optional) -->
+      <div class="flex items-center justify-center space-x-1 pt-2 border-t border-gray-100">
+        {% if page_obj.has_previous %}
+          <a href="?page=1{% if query_params %}{{ query_params }}{% endif %}"
+             class="text-xs text-gray-500 hover:text-pink-600 transition">
+            Перша
+          </a>
+          <span class="text-xs text-gray-300">•</span>
+        {% endif %}
+        <span
+            class="text-xs text-gray-600">{{ page_obj.start_index }}-{{ page_obj.end_index }} з {{ page_obj.paginator.count }}</span>
+        {% if page_obj.has_next %}
+          <span class="text-xs text-gray-300">•</span>
+          <a href="?page=
+              {{ page_obj.paginator.num_pages }}{% if query_params %}{{ query_params }}{% endif %}"
+             class="text-xs text-gray-500 hover:text-pink-600 transition">
+            Остання
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Desktop View -->
+    <div class="hidden lg:flex items-center justify-between">
+      <!-- Info Section -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center justify-center w-10 h-10 bg-pink-50 rounded-lg">
+          <span class="text-pink-600 font-semibold">{{ page_obj.number }}</span>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-800">
+            Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}
+          </p>
+          <p class="text-xs text-gray-500">
+            Показано {{ page_obj.start_index }}-{{ page_obj.end_index }}
+            з {{ page_obj.paginator.count }} {{ item_name|default:"елементів" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Section -->
+      <div class="flex items-center space-x-2">
+        <!-- First Page -->
+        {% if page_obj.has_previous %}
+          <a href="?page=1{% if query_params %}{{ query_params }}{% endif %}"
+             class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition group"
+             title="Перша сторінка">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+            </svg>
+          </a>
+
+          <!-- Previous Page -->
+          <a href="?page=
+              {{ page_obj.previous_page_number }}{% if query_params %}{{ query_params }}{% endif %}"
+             class="flex items-center justify-center px-4 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 19l-7-7 7-7"/>
+            </svg>
+            Попередня
+          </a>
+        {% else %}
+          <span
+              class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-100 text-gray-300 cursor-not-allowed">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+            </svg>
+          </span>
+        {% endif %}
+
+        <!-- Page Numbers -->
+        <div class="flex items-center space-x-1">
+          {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+              <span
+                  class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-pink-600 text-white font-semibold shadow-lg shadow-pink-500/30">
+                {{ num }}
+              </span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <a href="?page={{ num }}{% if query_params %}{{ query_params }}{% endif %}"
+                 class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
+                {{ num }}
+              </a>
+            {% elif num == 1 or num == page_obj.paginator.num_pages %}
+              <a href="?page={{ num }}{% if query_params %}{{ query_params }}{% endif %}"
+                 class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
+                {{ num }}
+              </a>
+            {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
+              <span class="flex items-center justify-center w-10 h-10 text-gray-400">...</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <!-- Next Page -->
+        {% if page_obj.has_next %}
+          <a href="?page=
+              {{ page_obj.next_page_number }}{% if query_params %}{{ query_params }}{% endif %}"
+             class="flex items-center justify-center px-4 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
+            Наступна
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+
+          <!-- Last Page -->
+          <a href="?page=
+              {{ page_obj.paginator.num_pages }}{% if query_params %}{{ query_params }}{% endif %}"
+             class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition"
+             title="Остання сторінка">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+            </svg>
+          </a>
+        {% else %}
+          <span
+              class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-100 text-gray-300 cursor-not-allowed">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+            </svg>
+          </span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endif %}

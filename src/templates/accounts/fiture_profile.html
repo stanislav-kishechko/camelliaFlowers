@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профіль - Camellia Flowers CRM{% endblock %}
+
+{% block mobile_title %}Профіль{% endblock %}
+
+{% block content %}
+  <div class="p-4 md:p-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Профіль користувача</h2>
+      <p class="text-gray-500 mt-1 text-sm md:text-base">Управління обліковим записом та
+        налаштуваннями</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      <!-- Profile Card -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+          <div class="text-center mb-6">
+            <div class="relative inline-block">
+              <div
+                  class="w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white text-3xl md:text-4xl font-bold mx-auto">
+                {{ user.first_name.0|default:"М" }}{{ user.last_name.0|default:"К" }}
+              </div>
+              <button
+                  class="absolute bottom-0 right-0 w-8 h-8 md:w-10 md:h-10 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition">
+                <span class="text-base md:text-lg">📷</span>
+              </button>
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-gray-800 mt-4">{{ user.get_full_name|default:"Марія Коваленко" }}</h3>
+            <p class="text-xs md:text-sm text-gray-500">{{ user.profile.position|default:"Менеджер з продажу" }}</p>
+            <div class="flex flex-wrap items-center justify-center gap-2 mt-2">
+              <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Активний</span>
+              {% if user.profile.is_top_manager %}
+                <span class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium">Топ менеджер</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-6 border-t border-gray-100">
+            <div class="flex items-center space-x-3 text-sm">
+              <span class="text-gray-400">📧</span>
+              <span class="text-gray-600 break-all">{{ user.email }}</span>
+            </div>
+            {% if user.profile.phone %}
+              <div class="flex items-center space-x-3 text-sm">
+                <span class="text-gray-400">📱</span>
+                <span class="text-gray-600">{{ user.profile.phone }}</span>
+              </div>
+            {% endif %}
+            {% if user.profile.city %}
+              <div class="flex items-center space-x-3 text-sm">
+                <span class="text-gray-400">📍</span>
+                <span class="text-gray-600">{{ user.profile.city }}</span>
+              </div>
+            {% endif %}
+            <div class="flex items-center space-x-3 text-sm">
+              <span class="text-gray-400">🗓️</span>
+              <span class="text-gray-600">В команді з {{ user.date_joined|date:"F Y" }}</span>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <h4 class="font-semibold text-gray-800 mb-3 text-sm md:text-base">Статистика</h4>
+            <div class="grid grid-cols-2 gap-3 md:gap-4">
+              <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-xl md:text-2xl font-bold text-pink-600">{{ user_stats.sales_count|default:"142" }}</p>
+                <p class="text-xs text-gray-500">Продажів</p>
+              </div>
+              <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-xl md:text-2xl font-bold text-pink-600">
+                  ₴{{ user_stats.revenue|default:"156k" }}</p>
+                <p class="text-xs text-gray-500">Дохід</p>
+              </div>
+              <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-xl md:text-2xl font-bold text-pink-600">{{ user_stats.rating|default:"4.9" }}</p>
+                <p class="text-xs text-gray-500">Рейтинг</p>
+              </div>
+              <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <p class="text-xl md:text-2xl font-bold text-pink-600">{{ user_stats.success_rate|default:"87" }}%</p>
+                <p class="text-xs text-gray-500">Успішність</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tabs -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+          <!-- Tabs -->
+          <div class="border-b border-gray-100 overflow-x-auto">
+            <div class="flex space-x-4 md:space-x-8 px-4 md:px-6 min-w-max">
+              <button onclick="showTab('personal')" id="tab-personal"
+                      class="py-4 border-b-2 border-pink-500 text-pink-600 font-medium text-xs md:text-sm whitespace-nowrap">
+                Персональні дані
+              </button>
+              <button onclick="showTab('security')" id="tab-security"
+                      class="py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-xs md:text-sm whitespace-nowrap">
+                Безпека
+              </button>
+              <button onclick="showTab('notifications')" id="tab-notifications"
+                      class="py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-xs md:text-sm whitespace-nowrap">
+                Сповіщення
+              </button>
+              <button onclick="showTab('preferences')" id="tab-preferences"
+                      class="py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-xs md:text-sm whitespace-nowrap">
+                Налаштування
+              </button>
+            </div>
+          </div>
+
+          <!-- Personal Information Tab -->
+          <div id="content-personal" class="p-4 md:p-6">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Персональна
+              інформація</h3>
+            <form method="post" action="{% url 'accounts:profile' %}" class="space-y-4">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="personal">
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Ім'я</label>
+                  <input type="text" name="first_name" value="{{ user.first_name }}"
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Прізвище</label>
+                  <input type="text" name="last_name" value="{{ user.last_name }}"
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input type="email" name="email" value="{{ user.email }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Телефон</label>
+                <input type="tel" name="phone" value="{{ user.profile.phone }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Посада</label>
+                <select name="position"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                  <option>Менеджер з продажу</option>
+                  <option>Старший менеджер</option>
+                  <option>Керівник відділу</option>
+                  <option>Адміністратор</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Місто</label>
+                <input type="text" name="city" value="{{ user.profile.city }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Про себе</label>
+                <textarea name="bio" rows="3"
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">{{ user.profile.bio }}</textarea>
+              </div>
+
+              <div
+                  class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
+                <button type="button"
+                        class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition text-sm md:text-base">
+                  Скасувати
+                </button>
+                <button type="submit"
+                        class="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition text-sm md:text-base">
+                  Зберегти зміни
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Security Tab -->
+          <div id="content-security" class="p-4 md:p-6 hidden">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Безпека
+              облікового запису</h3>
+
+            <div class="mb-6 md:mb-8">
+              <h4 class="font-medium text-gray-800 mb-4 text-sm md:text-base">Зміна пароля</h4>
+              <form method="post" action="{% url 'accounts:profile' %}" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="password">
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Поточний
+                    пароль</label>
+                  <input type="password" name="old_password" required
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Новий пароль</label>
+                  <input type="password" name="new_password1" required
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Підтвердіть новий
+                    пароль</label>
+                  <input type="password" name="new_password2" required
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                </div>
+                <button type="submit"
+                        class="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition text-sm md:text-base">
+                  Змінити пароль
+                </button>
+              </form>
+            </div>
+
+            <div class="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-gray-100">
+              <h4 class="font-medium text-gray-800 mb-4 text-sm md:text-base">Двофакторна
+                автентифікація</h4>
+              <div
+                  class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <p class="font-medium text-gray-800 text-sm md:text-base">Статус: <span
+                      class="text-red-600">Вимкнено</span></p>
+                  <p class="text-xs md:text-sm text-gray-500 mt-1">Додатковий рівень безпеки</p>
+                </div>
+                <button
+                    class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition text-xs md:text-sm whitespace-nowrap">
+                  Увімкнути
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="font-medium text-gray-800 mb-4 text-sm md:text-base">Активні сесії</h4>
+              <div class="space-y-3">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+                  <div class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span class="text-xl">💻</span>
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-800 text-sm md:text-base">Windows 11 -
+                        Chrome</p>
+                      <p class="text-xs md:text-sm text-gray-500">Київ, Україна • Активно зараз</p>
+                    </div>
+                  </div>
+                  <span
+                      class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium self-start sm:self-center">Поточна</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications Tab -->
+          <div id="content-notifications" class="p-4 md:p-6 hidden">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Налаштування
+              сповіщень</h3>
+
+            <form method="post" action="{% url 'accounts:profile' %}" class="space-y-6">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="notifications">
+
+              <div>
+                <h4 class="font-medium text-gray-800 mb-4 text-sm md:text-base">Email
+                  сповіщення</h4>
+                <div class="space-y-3">
+                  <div
+                      class="flex items-center justify-between p-3 md:p-4 border border-gray-200 rounded-lg">
+                    <div>
+                      <p class="font-medium text-gray-800 text-sm md:text-base">Нові замовлення</p>
+                      <p class="text-xs md:text-sm text-gray-500">Отримувати email при новому
+                        замовленні</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" name="email_new_orders" checked class="sr-only peer">
+                      <div
+                          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                    </label>
+                  </div>
+
+                  <div
+                      class="flex items-center justify-between p-3 md:p-4 border border-gray-200 rounded-lg">
+                    <div>
+                      <p class="font-medium text-gray-800 text-sm md:text-base">Оновлення
+                        статусу</p>
+                      <p class="text-xs md:text-sm text-gray-500">Сповіщення про зміну статусу</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" name="email_status_updates" checked
+                             class="sr-only peer">
+                      <div
+                          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button type="submit"
+                        class="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition text-sm md:text-base">
+                  Зберегти налаштування
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Preferences Tab -->
+          <div id="content-preferences" class="p-4 md:p-6 hidden">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Налаштування
+              системи</h3>
+
+            <form method="post" action="{% url 'accounts:profile' %}" class="space-y-6">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="preferences">
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Мова інтерфейсу</label>
+                <select name="language"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                  <option>🇺🇦 Українська</option>
+                  <option>🇬🇧 English</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Часовий пояс</label>
+                <select name="timezone"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                  <option>(GMT+2) Київ</option>
+                  <option>(GMT+0) Лондон</option>
+                  <option>(GMT+1) Берлін</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Валюта</label>
+                <select name="currency"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm md:text-base">
+                  <option>₴ Гривня (UAH)</option>
+                  <option>$ Долар (USD)</option>
+                  <option>€ Євро (EUR)</option>
+                </select>
+              </div>
+
+              <div
+                  class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
+                <button type="button"
+                        class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition text-sm md:text-base">
+                  Скасувати
+                </button>
+                <button type="submit"
+                        class="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition text-sm md:text-base">
+                  Зберегти налаштування
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+      function showTab(tabName) {
+          document.getElementById('content-personal').classList.add('hidden');
+          document.getElementById('content-security').classList.add('hidden');
+          document.getElementById('content-notifications').classList.add('hidden');
+          document.getElementById('content-preferences').classList.add('hidden');
+
+          ['personal', 'security', 'notifications', 'preferences'].forEach(tab => {
+              const tabBtn = document.getElementById('tab-' + tab);
+              tabBtn.classList.remove('border-pink-500', 'text-pink-600');
+              tabBtn.classList.add('border-transparent', 'text-gray-500');
+          });
+
+          document.getElementById('content-' + tabName).classList.remove('hidden');
+          const activeTab = document.getElementById('tab-' + tabName);
+          activeTab.classList.remove('border-transparent', 'text-gray-500');
+          activeTab.classList.add('border-pink-500', 'text-pink-600');
+      }
+  </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+<div class="empty-state text-center py-12">
+  <div class="empty-state-icon">{{ icon|default:"📦" }}</div>
+  <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ title|default:"Немає даних" }}</h3>
+  <p class="text-gray-500 mb-4">{{ description|default:"Почніть з додавання нових записів" }}</p>
+  {% if action_url %}
+    <a href="{{ action_url }}"
+       class="inline-block px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition">
+      {{ action_text|default:"Додати" }}
+    </a>
+  {% endif %}
+</div>

@@ -1,0 +1,154 @@
+<!-- Edit Product Modal Component -->
+<div id="editProductModal"
+     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-4 md:p-6 border-b border-gray-100">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl md:text-2xl font-bold text-gray-800">Редагувати продукт</h3>
+        <button onclick="closeEditProductModal()" class="text-gray-400 hover:text-gray-600">
+          <span class="text-2xl">×</span>
+        </button>
+      </div>
+    </div>
+    <div class="p-4 md:p-6">
+      <form method="post" id="editProductForm" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" name="_method" value="PUT">
+        <input type="hidden" id="edit_product_id" name="product_id">
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Назва продукту *</label>
+          <input type="text" name="name" id="edit_name" required
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Опис</label>
+          <textarea name="description" id="edit_description" rows="3"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Категорія *</label>
+          <select name="category" id="edit_category" required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+            <option value="">Оберіть категорію</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.emoji }} {{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ціна (₴) *</label>
+            <input type="number" name="price" id="edit_price" required min="0" step="0.01"
+                   placeholder="0.00"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Кількість на складі *</label>
+            <input type="number" name="stock" id="edit_stock" required min="0" placeholder="0"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Зображення</label>
+
+          <!-- Поточне зображення -->
+          <div id="current_image_container" class="hidden mb-3">
+            <div class="relative">
+              <img id="current_image_preview" src="" alt="Поточне зображення"
+                   class="w-full h-64 object-cover rounded-lg border-2 border-gray-200">
+              <div
+                  class="absolute top-2 right-2 flex space-x-2 bg-white rounded-lg shadow-lg p-1">
+                <button type="button" onclick="removeCurrentImage()"
+                        class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm transition">
+                  Видалити
+                </button>
+              </div>
+            </div>
+            <p id="current_image_name" class="text-sm text-gray-600 mt-2"></p>
+          </div>
+
+          <!-- Попередній перегляд нового зображення -->
+          <div id="edit_image_preview" class="hidden mb-3">
+            <div class="relative">
+              <img id="edit_preview_img" src="" alt="Preview"
+                   class="w-full h-64 object-cover rounded-lg border-2 border-gray-200">
+              <button type="button" onclick="clearEditImage()"
+                      class="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition">
+                <span class="text-xl leading-none">×</span>
+              </button>
+            </div>
+            <p id="edit_image_name" class="text-sm text-gray-600 mt-2"></p>
+          </div>
+
+          <!-- File input -->
+          <div class="flex items-center justify-center w-full">
+            <label for="edit_image_input"
+                   class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Натисніть для завантаження</span>
+                  або перетягніть файл</p>
+                <p class="text-xs text-gray-500">PNG, JPG, WEBP (макс. 5MB)</p>
+              </div>
+              <input id="edit_image_input" type="file" name="image" accept="image/*"
+                     onchange="previewEditImage(this)" class="hidden">
+            </label>
+          </div>
+
+          <!-- Hidden field to track if we should remove the current image -->
+          <input type="hidden" id="remove_image" name="remove_image" value="false">
+        </div>
+
+        <div
+            class="bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg p-4 border border-pink-100">
+          <div class="flex items-center justify-between">
+            <div>
+              <label for="edit_is_active"
+                     class="text-sm font-medium text-gray-800 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-pink-600" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Активний продукт
+              </label>
+              <p class="text-xs text-gray-600 mt-1 ml-7">Продукт буде доступний для замовлення</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" name="is_active" id="edit_is_active" class="sr-only peer">
+              <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+            </label>
+          </div>
+        </div>
+
+        <div
+            class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4 border-t border-gray-100">
+          <button type="button" onclick="closeEditProductModal()"
+                  class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">
+            Скасувати
+          </button>
+          <button type="submit"
+                  class="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-lg font-medium transition shadow-lg shadow-pink-500/30">
+            <span class="flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5 13l4 4L19 7"/>
+              </svg>
+              Зберегти зміни
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

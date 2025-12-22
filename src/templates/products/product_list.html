@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Продукти - Camellia Flowers CRM{% endblock %}
+
+{% block mobile_title %}Продукти{% endblock %}
+
+{% block content %}
+  <div class="p-4 md:p-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Продукти</h2>
+          <p class="text-gray-500 mt-1 text-sm md:text-base">Каталог квітів та композицій</p>
+        </div>
+        <button onclick="openNewProductModal()"
+                class="px-4 md:px-6 py-2 md:py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition flex items-center justify-center space-x-2 text-sm md:text-base">
+          <span>+</span>
+          <span>Додати продукт</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+        <div class="flex items-center space-x-2 md:space-x-3">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="text-xl md:text-2xl">🌺</span>
+          </div>
+          <div>
+            <p class="text-xs md:text-sm text-gray-500">Всього</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-800">{{ total_products }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+        <div class="flex items-center space-x-2 md:space-x-3">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="text-xl md:text-2xl">✅</span>
+          </div>
+          <div>
+            <p class="text-xs md:text-sm text-gray-500">В наявності</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-800">{{ in_stock }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+        <div class="flex items-center space-x-2 md:space-x-3">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="text-xl md:text-2xl">⚠️</span>
+          </div>
+          <div>
+            <p class="text-xs md:text-sm text-gray-500">Закінчуються</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-800">{{ low_stock }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+        <div class="flex items-center space-x-2 md:space-x-3">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="text-xl md:text-2xl">💰</span>
+          </div>
+          <div>
+            <p class="text-xs md:text-sm text-gray-500">Середня ціна</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-800">₴{{ avg_price }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Form -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+      <form method="get" id="filterForm"
+            class="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+        <div class="relative flex-1 min-w-0">
+          <input type="text"
+                 name="search"
+                 value="{{ current_search }}"
+                 placeholder="Пошук продукту..."
+                 class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+          <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
+        </div>
+
+        <select name="category"
+                onchange="this.form.submit()"
+                class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+          <option value="">Всі категорії</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}"
+                    {% if current_category == category.id|stringformat:"s" %}selected{% endif %}>
+              {{ category.emoji }} {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <select name="status"
+                onchange="this.form.submit()"
+                class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+          <option value="">Всі статуси</option>
+          <option value="in_stock" {% if current_status == 'in_stock' %}selected{% endif %}>В
+            наявності
+          </option>
+          <option value="low_stock" {% if current_status == 'low_stock' %}selected{% endif %}>
+            Закінчується
+          </option>
+          <option value="out_of_stock" {% if current_status == 'out_of_stock' %}selected{% endif %}>
+            Немає в наявності
+          </option>
+        </select>
+
+        <select name="sort"
+                onchange="this.form.submit()"
+                class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+          <option value="name" {% if current_sort == 'name' %}selected{% endif %}>За назвою</option>
+          <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>За ціною
+            ↑
+          </option>
+          <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>За
+            ціною ↓
+          </option>
+          <option value="popularity" {% if current_sort == 'popularity' %}selected{% endif %}>За
+            популярністю
+          </option>
+        </select>
+
+        {% if current_search or current_category or current_status or current_sort != 'name' %}
+          <a href="{% url 'products:products' %}"
+             class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm md:text-base whitespace-nowrap">
+            Скинути
+          </a>
+        {% endif %}
+      </form>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-6">
+      {% for product in products %}
+        <div
+            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+          <div
+              class="h-36 md:h-48 bg-gradient-to-br {{ product.gradient_color|default:'from-pink-100 to-rose-100' }} flex items-center justify-center relative overflow-hidden">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                   class="w-full h-full object-cover">
+            {% else %}
+              <span class="text-5xl md:text-7xl">{{ product.emoji|default:"🌹" }}</span>
+            {% endif %}
+            <span
+                class="absolute top-3 right-3 px-2 py-1 {% if product.stock > 10 %}bg-green-500{% elif product.stock > 0 %}bg-yellow-500{% else %}bg-gray-500{% endif %} text-white rounded-full text-xs font-medium">
+              {% if product.stock > 10 %}В наявності{% elif product.stock > 0 %}
+                Закінчується{% else %}Немає{% endif %}
+            </span>
+          </div>
+          <div class="p-3 md:p-4">
+            <h3 class="font-semibold text-gray-800 mb-2 text-sm md:text-base truncate">{{ product.name }}</h3>
+            <p class="text-xs md:text-sm text-gray-500 mb-3 truncate">{{ product.description }}</p>
+
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <p class="text-xs text-gray-500">Ціна</p>
+                <p class="text-lg md:text-xl font-bold text-pink-600">₴{{ product.price }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-gray-500">На складі</p>
+                <p class="text-sm font-semibold {% if product.stock > 10 %}text-gray-800{% elif product.stock > 0 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                  {{ product.stock }} шт
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
+              <span>Продано: {{ product.sold|default:"0" }}</span>
+              {% if product.rating %}
+                <span>⭐ {{ product.rating }}</span>
+              {% endif %}
+            </div>
+
+            <div class="flex space-x-2">
+              <a href="{% url 'products:detail' product.pk %}"
+                 class="flex-1 px-2 md:px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 font-medium transition text-xs md:text-sm text-center">
+                Детальніше
+              </a>
+              <button
+                  onclick="openEditProductModal({{ product.id }}, '{{ product.name|escapejs }}', '{{ product.description|escapejs }}', '{{ product.category.id }}', {{ product.price }}, {{ product.stock }}, {{ product.is_active|yesno:'true,false' }}, {% if product.image %}'{{ product.image.url }}', '{{ product.image.name }}'{% else %}null, null{% endif %})"
+                  class="px-2 md:px-3 py-2 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition text-xs md:text-sm">
+                ✏️
+              </button>
+              <button onclick="confirmDelete({{ product.id }}, '{{ product.name|escapejs }}')"
+                      class="px-2 md:px-3 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition text-xs md:text-sm">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-span-full text-center py-12">
+          <p class="text-5xl mb-4">🔍</p>
+          <p class="text-gray-500 text-lg">Немає продуктів за вашим запитом</p>
+          {% if current_search or current_category or current_status %}
+            <a href="{% url 'products:products' %}"
+               class="inline-block mt-4 px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition">
+              Показати всі продукти
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+          <!-- Info Section -->
+          <div class="flex items-center space-x-3">
+            <div class="flex items-center justify-center w-10 h-10 bg-pink-50 rounded-lg">
+              <span class="text-pink-600 font-semibold">{{ page_obj.number }}</span>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-800">
+                Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}
+              </p>
+              <p class="text-xs text-gray-500">
+                Показано {{ page_obj.start_index }}-{{ page_obj.end_index }}
+                з {{ page_obj.paginator.count }} продуктів
+              </p>
+            </div>
+          </div>
+
+          <!-- Navigation Section -->
+          <div class="flex items-center space-x-2">
+            <!-- First Page -->
+            {% if page_obj.has_previous %}
+              <a href="?page=1{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                 class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition group"
+                 title="Перша сторінка">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                </svg>
+              </a>
+
+              <!-- Previous Page -->
+              <a href="?page=
+                  {{ page_obj.previous_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                 class="hidden sm:flex items-center justify-center px-4 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 19l-7-7 7-7"/>
+                </svg>
+                Попередня
+              </a>
+            {% else %}
+              <span
+                  class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-100 text-gray-300 cursor-not-allowed">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                </svg>
+              </span>
+            {% endif %}
+
+            <!-- Page Numbers -->
+            <div class="flex items-center space-x-1">
+              {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                  <!-- Current Page -->
+                  <span
+                      class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-pink-600 text-white font-semibold shadow-lg shadow-pink-500/30">
+                    {{ num }}
+                  </span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <!-- Nearby Pages -->
+                  <a href="?page=
+                      {{ num }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                     class="hidden md:flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
+                    {{ num }}
+                  </a>
+                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                  <!-- First and Last Pages (always visible) -->
+                  <a href="?page=
+                      {{ num }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                     class="hidden lg:flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
+                    {{ num }}
+                  </a>
+                {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
+                  <!-- Ellipsis -->
+                  <span class="hidden lg:flex items-center justify-center w-10 h-10 text-gray-400">...</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <!-- Next Page -->
+            {% if page_obj.has_next %}
+              <a href="?page=
+                  {{ page_obj.next_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                 class="hidden sm:flex items-center justify-center px-4 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
+                Наступна
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
+
+              <!-- Last Page -->
+              <a href="?page=
+                  {{ page_obj.paginator.num_pages }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+                 class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition"
+                 title="Остання сторінка">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                </svg>
+              </a>
+            {% else %}
+              <span
+                  class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-100 text-gray-300 cursor-not-allowed">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                </svg>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Include Modal Components -->
+  {% include 'products/partial/product_add_partial.html' %}
+  {% include 'products/partial/product_edit_partial.html' %}
+  {% include 'products/partial/product_delete_partial.html' %}
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+      // New Product Modal Functions
+      function openNewProductModal() {
+          document.getElementById('newProductModal').classList.remove('hidden');
+      }
+
+      function closeNewProductModal() {
+          document.getElementById('newProductModal').classList.add('hidden');
+      }
+
+      // Search on input with debounce
+      let searchTimeout;
+      const searchInput = document.querySelector('input[name="search"]');
+      if (searchInput) {
+          searchInput.addEventListener('input', function () {
+              clearTimeout(searchTimeout);
+              searchTimeout = setTimeout(() => {
+                  this.form.submit();
+              }, 500);
+          });
+      }
+  </script>
+
+  <!-- Include shared product modal functions -->
+  <script src="{% static 'js/product_modals.js' %}"></script>
+{% endblock %}

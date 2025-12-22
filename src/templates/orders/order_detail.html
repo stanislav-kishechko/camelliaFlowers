@@ -1,0 +1,360 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Замовлення #{{ order.id }}{% endblock %}
+
+{% block content %}
+  <div class="container mx-auto px-4 py-6 max-w-6xl">
+
+    <!-- Хедер -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+      <div class="flex items-center space-x-4">
+        <a href="{% url 'orders:orders' %}"
+           class="text-gray-600 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-lg transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 19l-7-7 7-7"/>
+          </svg>
+        </a>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Замовлення #{{ order.id }}</h1>
+          <p class="text-sm text-gray-500 mt-1">
+            Створено {{ order.created_at|date:"d.m.Y о H:i" }}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3 w-full sm:w-auto">
+        <button onclick="openDeleteOrderModal({{ order.id }})"
+                class="flex-1 sm:flex-none px-4 py-2 bg-red-50 text-red-600 border-2 border-red-200 rounded-xl hover:bg-red-100 transition-all hover:scale-105 font-medium">
+          <span class="flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            Видалити
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Основна інформація (2 колонки) -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Інформація про клієнта -->
+        <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">👤 Клієнт</h2>
+            <a href="{% url 'clients:client_detail' order.client.id %}"
+               class="text-pink-600 hover:text-pink-700 text-sm font-medium hover:underline">
+              Переглянути профіль →
+            </a>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-600">Ім'я:</span>
+              <span class="font-semibold text-gray-900">{{ order.client.full_name }}</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-600">Телефон:</span>
+              <a href="tel:{{ order.client.phone }}"
+                 class="font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+                {{ order.client.phone }}
+              </a>
+            </div>
+            {% if order.client.email %}
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span class="text-gray-600">Email:</span>
+                <a href="mailto:{{ order.client.email }}"
+                   class="font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+                  {{ order.client.email }}
+                </a>
+              </div>
+            {% endif %}
+            <div class="flex items-center justify-between pt-3 border-t">
+              <span class="text-gray-600">Статистика:</span>
+              <div class="text-right">
+                <p class="text-sm text-gray-500">{{ order.client.orders_count }} замовлень</p>
+                <p class="font-semibold text-pink-600">₴{{ order.client.total_spent }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Товари -->
+        <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">🛍️ Товари</h2>
+
+          <div class="space-y-3">
+            {% for item in order.items.all %}
+              <div
+                  class="flex items-center justify-between p-4 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl border border-pink-100 hover:shadow-md transition">
+                <div class="flex items-center space-x-3">
+                  <span class="text-3xl">{{ item.product.emoji|default:"🌹" }}</span>
+                  <div>
+                    <p class="font-semibold text-gray-800">{{ item.product.name }}</p>
+                    <p class="text-sm text-gray-600">₴{{ item.unit_price }} × {{ item.quantity }}
+                      шт</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs text-gray-500">Сума</p>
+                  <p class="text-lg font-bold text-pink-600">₴{{ item.subtotal }}</p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Загальна сума -->
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div
+                class="flex items-center justify-between p-4 bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl">
+              <span class="text-lg font-semibold text-gray-700">Загальна сума:</span>
+              <span
+                  class="text-2xl md:text-3xl font-bold text-pink-600">₴{{ order.total_price|floatformat:2 }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Деталі доставки -->
+        <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            {% if order.needs_delivery %}🚚 Доставка{% else %}🏪 Самовивіз{% endif %}
+          </h2>
+
+          <div class="space-y-3">
+            {% if order.needs_delivery %}
+              <!-- Інформація про доставку -->
+              <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p class="text-sm font-medium text-blue-700">Тип замовлення</p>
+                <p class="font-semibold text-blue-900">Доставка</p>
+              </div>
+
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-600 mb-1">Адреса</p>
+                <p class="font-semibold text-gray-900">{{ order.delivery_address }}</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-3 bg-gray-50 rounded-lg">
+                  <p class="text-sm text-gray-600 mb-1">Дата</p>
+                  <p class="font-semibold text-gray-900">{{ order.delivery_date|date:"d.m.Y" }}</p>
+                </div>
+                {% if order.delivery_time %}
+                  <div class="p-3 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-600 mb-1">Час</p>
+                    <p class="font-semibold text-gray-900">{{ order.delivery_time|time:"H:i" }}</p>
+                  </div>
+                {% endif %}
+              </div>
+            {% else %}
+              <!-- Інформація про самовивіз -->
+              <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div class="flex items-start space-x-3">
+                  <div class="flex-shrink-0">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
+                         viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 13l4 4L19 7"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-green-700">Самовивіз з магазину</p>
+                    <p class="text-sm text-green-600 mt-1">Клієнт забере замовлення самостійно</p>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if order.notes %}
+              <div class="pt-3 border-t">
+                <p class="text-sm text-gray-600 mb-2">Примітки</p>
+                <p class="text-gray-800 p-3 bg-yellow-50 rounded-lg border border-yellow-200">{{ order.notes }}</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Бічна панель -->
+      <div class="space-y-6">
+
+        <!-- Статус -->
+        <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">📊 Статус</h2>
+
+          <div class="space-y-4">
+            <!-- Поточний статус -->
+            <div
+                class="p-4 bg-{{ status_color }}-50 border-2 border-{{ status_color }}-200 rounded-xl">
+              <p class="text-sm text-gray-600 mb-1">Поточний статус</p>
+              <p class="text-lg font-bold text-{{ status_color }}-700">{{ order.get_status_display }}</p>
+            </div>
+
+            <!-- Зміна статусу -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Змінити статус</label>
+              <select id="status_select"
+                      class="w-full px-4 py-2 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                      onchange="changeOrderStatus({{ order.id }}, this.value)">
+                <option value="">-- Оберіть статус --</option>
+                {% for status_value, status_label in available_statuses %}
+                  <option value="{{ status_value }}">{{ status_label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Хронологія статусів -->
+        <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">⏱️ Історія</h2>
+
+          <div class="space-y-4 max-h-96 overflow-y-auto">
+            {% for history in order.get_status_timeline %}
+              <div class="relative pl-6 pb-4 border-l-2 border-gray-200 last:border-l-0 last:pb-0">
+                <div
+                    class="absolute left-0 top-0 -translate-x-1/2 w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow"></div>
+
+                <div class="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm font-semibold text-gray-900">
+                      {{ history.get_to_status_display }}
+                    </span>
+                    <span class="text-xs text-gray-500">
+                      {{ history.created_at|date:"d.m.Y H:i" }}
+                    </span>
+                  </div>
+
+                  {% if history.changed_by %}
+                    <p class="text-xs text-gray-600">
+                      Змінив: {{ history.changed_by.get_full_name }}
+                    </p>
+                  {% endif %}
+
+                  {% if history.duration_in_previous_status %}
+                    <p class="text-xs text-gray-500 mt-1">
+                      Тривалість: {{ history.duration_in_previous_status }}
+                    </p>
+                  {% endif %}
+
+                  {% if history.notes %}
+                    <p class="text-xs text-gray-700 mt-2 italic bg-white p-2 rounded border-l-2 border-blue-400">
+                      "{{ history.notes }}"
+                    </p>
+                  {% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <div class="text-center py-8">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-gray-500 text-sm">Історія змін відсутня</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Мета-інформація -->
+        <div
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">ℹ️ Інформація</h2>
+
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between p-2 bg-gray-50 rounded-lg">
+              <span class="text-gray-600">Створено:</span>
+              <span class="font-medium text-gray-900">{{ order.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            <div class="flex justify-between p-2 bg-gray-50 rounded-lg">
+              <span class="text-gray-600">Оновлено:</span>
+              <span class="font-medium text-gray-900">{{ order.updated_at|date:"d.m.Y H:i" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'orders/partials/order_delete_partial.html' %}
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/order_modals.js' %}"></script>
+
+  <script>
+      // Зміна статусу замовлення
+      function changeOrderStatus(orderId, newStatus) {
+          if (!newStatus) return;
+
+          const notes = prompt('Примітка до зміни статусу (необов\'язково):');
+
+          if (notes === null) {
+              document.getElementById('status_select').value = '';
+              return;
+          }
+
+          // Показати індикатор завантаження
+          const statusSelect = document.getElementById('status_select');
+          const originalHTML = statusSelect.innerHTML;
+          statusSelect.disabled = true;
+          statusSelect.innerHTML = '<option>Оновлення...</option>';
+
+          fetch(`/api/orders/${orderId}/status/`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}',
+              },
+              body: JSON.stringify({
+                  status: newStatus,
+                  notes: notes
+              })
+          })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      // Показати успішне повідомлення
+                      const successMsg = document.createElement('div');
+                      successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
+                      successMsg.innerHTML = `
+                          <div class="flex items-center">
+                              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                              </svg>
+                              ${data.message}
+                          </div>
+                      `;
+                      document.body.appendChild(successMsg);
+
+                      setTimeout(() => {
+                          successMsg.remove();
+                          window.location.reload();
+                      }, 1500);
+                  } else {
+                      alert('Помилка: ' + data.error);
+                      statusSelect.innerHTML = originalHTML;
+                      statusSelect.disabled = false;
+                      statusSelect.value = '';
+                  }
+              })
+              .catch(error => {
+                  console.error('Помилка:', error);
+                  alert('Виникла помилка при зміні статусу');
+                  statusSelect.innerHTML = originalHTML;
+                  statusSelect.disabled = false;
+                  statusSelect.value = '';
+              });
+      }
+  </script>
+{% endblock %}

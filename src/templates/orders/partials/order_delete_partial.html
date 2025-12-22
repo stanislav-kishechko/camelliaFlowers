@@ -1,0 +1,157 @@
+<!-- Покращене модальне вікно видалення замовлення -->
+<div id="deleteOrderModal"
+     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-all duration-300">
+  <div
+      class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-95 hover:scale-100">
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800">Видалити замовлення</h3>
+        </div>
+        <button onclick="closeDeleteOrderModal()"
+                class="text-gray-400 hover:text-gray-600 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6">
+      <div class="text-center mb-6">
+        <!-- Animated Warning Icon -->
+        <div class="relative inline-block mb-4">
+          <div class="absolute inset-0 bg-red-200 rounded-full animate-ping opacity-75"></div>
+          <div
+              class="relative w-20 h-20 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center">
+            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+        </div>
+
+        <p class="text-lg text-gray-700 mb-2 font-semibold">Ви впевнені?</p>
+        <p class="text-sm text-gray-500 mb-4">Ця дія незворотна і видалить усі дані замовлення</p>
+
+        <!-- Order Info Card -->
+        <div id="delete_order_info"
+             class="mt-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 text-left">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Замовлення:</span>
+              <span class="text-lg font-bold text-gray-900" id="delete_order_number">#0</span>
+            </div>
+            <div class="border-t border-gray-200 pt-2">
+              <p class="text-sm text-gray-700 font-medium" id="delete_order_client">-</p>
+              <p class="text-xs text-gray-600 mt-1" id="delete_order_product">-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning Alert -->
+        <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
+          <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor"
+               viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"/>
+          </svg>
+          <p class="text-sm text-red-700 font-medium">Цю дію не можна буде скасувати!</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <form method="post" id="deleteOrderForm" class="space-y-3">
+        {% csrf_token %}
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button type="button"
+                  onclick="closeDeleteOrderModal()"
+                  class="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-semibold transition-all duration-200 hover:scale-105 focus:ring-4 focus:ring-gray-200">
+            <span class="flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              Скасувати
+            </span>
+          </button>
+          <button type="submit"
+                  class="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-semibold transition-all duration-200 hover:scale-105 shadow-lg shadow-red-500/30 focus:ring-4 focus:ring-red-300">
+            <span class="flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              Так, видалити
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+    /* Анімація появи модалки */
+    #deleteOrderModal {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    #deleteOrderModal > div {
+        animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Hover ефект для кнопок */
+    #deleteOrderForm button {
+        position: relative;
+        overflow: hidden;
+    }
+
+    #deleteOrderForm button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    #deleteOrderForm button:active::before {
+        width: 300px;
+        height: 300px;
+    }
+</style>

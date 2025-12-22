@@ -1,0 +1,52 @@
+<div
+    class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+  <div
+      class="h-36 md:h-48 bg-gradient-to-br {{ product.gradient_color|default:'from-pink-100 to-rose-100' }} flex items-center justify-center relative">
+    <span class="text-5xl md:text-7xl">{{ product.emoji|default:"🌹" }}</span>
+    <span
+        class="absolute top-3 right-3 px-2 py-1 {% if product.stock > 10 %}bg-green-500{% elif product.stock > 0 %}bg-yellow-500{% else %}bg-gray-500{% endif %} text-white rounded-full text-xs font-medium">
+            {% if product.stock > 10 %}В наявності{% elif product.stock > 0 %}Закінчується{% else %}
+              Немає{% endif %}
+        </span>
+  </div>
+  <div class="p-3 md:p-4">
+    <h3 class="font-semibold text-gray-800 mb-2 text-sm md:text-base truncate">{{ product.name }}</h3>
+    <p class="text-xs md:text-sm text-gray-500 mb-3 truncate">{{ product.description }}</p>
+
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <p class="text-xs text-gray-500">Ціна</p>
+        <p class="text-lg md:text-xl font-bold text-pink-600">₴{{ product.price }}</p>
+      </div>
+      <div class="text-right"
+           hx-get="{% url 'product_update_stock' product.id %}"
+           hx-trigger="stock-updated from:body">
+        <p class="text-xs text-gray-500">На складі</p>
+        <p class="text-sm font-semibold {% if product.stock > 10 %}text-gray-800{% elif product.stock > 0 %}text-yellow-600{% else %}text-red-600{% endif %}">
+          {{ product.stock }} шт
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
+      <span>Продано: {{ product.sales_count|default:"0" }}</span>
+      {% if product.rating %}
+        <span>⭐ {{ product.rating }}</span>
+      {% endif %}
+    </div>
+
+    <div class="flex space-x-2">
+      <a href="{% url 'product_edit' product.id %}"
+         class="flex-1 px-2 md:px-3 py-2 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 font-medium transition text-xs md:text-sm text-center">
+        Редагувати
+      </a>
+      <button
+          hx-post="{% url 'product_toggle_status' product.id %}"
+          hx-target="closest .bg-white"
+          hx-swap="outerHTML"
+          class="px-2 md:px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition text-xs md:text-sm">
+        {% if product.is_active %}🔴{% else %}🟢{% endif %}
+      </button>
+    </div>
+  </div>
+</div>

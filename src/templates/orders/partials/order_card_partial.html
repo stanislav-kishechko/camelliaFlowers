@@ -1,0 +1,43 @@
+<div class="bg-white rounded-lg border border-{{ status_color }}-200 p-3 md:p-4 hover:shadow-md transition cursor-pointer"
+     onclick="window.location.href='{% url 'orders:order_detail' order.pk %}'">
+  <div class="flex items-center justify-between mb-2 md:mb-3">
+    <span class="text-xs md:text-sm font-semibold text-gray-800">#{{ order.id }}</span>
+    <span class="text-xs text-gray-500">
+      {% if order.status == 'completed' %}
+        {{ order.updated_at|date:"d.m" }}
+      {% else %}
+        {{ order.created_at|timesince }} тому
+      {% endif %}
+    </span>
+  </div>
+
+  <h4 class="font-medium text-gray-800 mb-2 text-sm md:text-base">{{ order.client.full_name }}</h4>
+
+  <p class="text-xs md:text-sm text-gray-600 mb-1">
+    {{ order.product.emoji|default:"🌹" }} {{ order.product.name }}
+    {% if order.quantity > 1 %}
+      <span class="text-gray-500">({{ order.quantity }} шт)</span>
+    {% endif %}
+  </p>
+
+  {% if order.delivery_address and order.status == 'delivery' %}
+    <p class="text-xs text-blue-600 mb-2">📍 {{ order.delivery_address|truncatewords:5 }}</p>
+  {% endif %}
+
+  {% if order.delivery_date %}
+    <p class="text-xs text-gray-500 mb-2">
+      🕐 {{ order.delivery_date|date:"d.m.Y" }}
+      {% if order.delivery_time %}
+        о {{ order.delivery_time|time:"H:i" }}
+      {% endif %}
+    </p>
+  {% endif %}
+
+  <div class="flex items-center justify-between mt-3">
+    <span class="text-base md:text-lg font-bold text-pink-600">₴{{ order.total_price }}</span>
+    <button onclick="event.stopPropagation(); openEditOrderModal({{ order.id }})"
+            class="text-xs text-gray-500 hover:text-pink-600 transition">
+      Деталі
+    </button>
+  </div>
+</div>

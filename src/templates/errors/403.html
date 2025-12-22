@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Доступ заборонено | Camellia Flowers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Shake animation for lock */
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); }
+            20%, 40%, 60%, 80% { transform: rotate(5deg); }
+        }
+
+        .shake-lock {
+            animation: shake 0.5s ease-in-out;
+            animation-iteration-count: 2;
+        }
+
+        .shake-lock:hover {
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        /* Fence pattern */
+        .fence {
+            background-image: repeating-linear-gradient(
+                90deg,
+                #f59e0b 0px,
+                #f59e0b 20px,
+                transparent 20px,
+                transparent 40px
+            );
+            height: 4px;
+        }
+
+        /* Glass morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Warning stripes */
+        @keyframes stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 0; }
+        }
+
+        .warning-stripes {
+            background: repeating-linear-gradient(
+                45deg,
+                #fbbf24,
+                #fbbf24 10px,
+                #f59e0b 10px,
+                #f59e0b 20px
+            );
+            background-size: 50px 50px;
+            animation: stripes 1s linear infinite;
+        }
+
+        /* Gradient text */
+        .forbidden-gradient {
+            background: linear-gradient(135deg, #dc2626, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen relative">
+
+    <!-- Warning stripes at top -->
+    <div class="warning-stripes h-3 w-full"></div>
+
+    <div class="min-h-screen flex items-center justify-center p-4 relative">
+        <div class="max-w-2xl w-full">
+
+            <!-- Main content -->
+            <div class="glass rounded-3xl shadow-2xl p-8 md:p-12 text-center relative overflow-hidden">
+
+                <!-- Decorative fence at top -->
+                <div class="fence absolute top-0 left-0 w-full"></div>
+
+                <!-- Lock icon with shake -->
+                <div class="flex justify-center mb-8 mt-6">
+                    <div class="w-32 h-32 bg-gradient-to-br from-red-100 to-orange-100 rounded-full flex items-center justify-center shake-lock cursor-pointer">
+                        <span class="text-7xl">🔒</span>
+                    </div>
+                </div>
+
+                <!-- 403 Number -->
+                <h1 class="text-8xl md:text-[10rem] font-bold forbidden-gradient leading-none mb-4">
+                    403
+                </h1>
+
+                <!-- Title -->
+                <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">
+                    Доступ заборонено
+                </h2>
+
+                <!-- Description -->
+                <p class="text-gray-600 text-lg mb-6 max-w-md mx-auto">
+                    Вибачте, але ви не маєте прав для перегляду цієї сторінки.
+                    Цей сад закритий для відвідування без спеціального дозволу! 🚫
+                </p>
+
+                <!-- Warning box -->
+                <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-5 mb-8 text-left max-w-md mx-auto">
+                    <div class="flex items-start gap-3">
+                        <span class="text-3xl flex-shrink-0">⚠️</span>
+                        <div>
+                            <h3 class="font-semibold text-amber-900 mb-2">Можливі причини:</h3>
+                            <ul class="text-sm text-amber-800 space-y-1">
+                                <li>• У вас немає відповідних прав доступу</li>
+                                <li>• Ваша сесія могла закінчитись</li>
+                                <li>• Це приватна область системи</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                    <a
+                        href="{% url 'accounts:login' %}"
+                        class="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                    >
+                        <span class="relative z-10">🔑 Увійти</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </a>
+
+                    <a
+                        href="{% url 'dashboard:dashboard' %}"
+                        class="px-8 py-4 bg-white text-gray-700 rounded-xl font-medium border-2 border-gray-200 hover:border-amber-300 hover:text-amber-600 transition-all duration-300"
+                    >
+                        🏠 На головну
+                    </a>
+                </div>
+
+                <!-- Contact support -->
+                <div class="pt-8 border-t border-gray-200">
+                    <p class="text-sm text-gray-600 mb-3">
+                        Думаєте, що це помилка? Зверніться до адміністратора:
+                    </p>
+                    <a
+                        href="mailto:admin@camellia.com"
+                        class="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium hover:underline"
+                    >
+                        <span>📧</span>
+                        <span>admin@camellia.com</span>
+                    </a>
+                </div>
+
+                <!-- Decorative fence at bottom -->
+                <div class="fence absolute bottom-0 left-0 w-full"></div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-8">
+                <p class="text-sm text-gray-500">
+                    © 2024 Camellia Flowers CRM. Безпека понад усе! 🛡️
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning stripes at bottom -->
+    <div class="warning-stripes h-3 w-full absolute bottom-0"></div>
+
+</body>
+</html>

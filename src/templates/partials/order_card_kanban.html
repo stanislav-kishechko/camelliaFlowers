@@ -1,0 +1,21 @@
+<div
+    class="bg-white rounded-lg border border-gray-200 p-3 md:p-4 hover:shadow-md transition cursor-pointer"
+    draggable="true"
+    data-order-id="{{ order.id }}">
+  <div class="flex items-center justify-between mb-2 md:mb-3">
+    <span class="text-xs md:text-sm font-semibold text-gray-800">#{{ order.id }}</span>
+    <span class="text-xs text-gray-500">{{ order.created_at|timesince }} тому</span>
+  </div>
+  <h4 class="font-medium text-gray-800 mb-2 text-sm md:text-base">{{ order.client.full_name }}</h4>
+  <p class="text-xs md:text-sm text-gray-600 mb-2 md:mb-3">{{ order.product.emoji }} {{ order.product.name }}</p>
+  {% if order.delivery_address %}
+    <p class="text-xs text-gray-500 mb-2 md:mb-3 truncate">📍 {{ order.delivery_address }}</p>
+  {% endif %}
+  <div class="flex items-center justify-between">
+    <span class="text-base md:text-lg font-bold text-pink-600">₴{{ order.total }}</span>
+    <a href="{% url 'order_edit' order.id %}"
+       class="text-gray-400 hover:text-pink-500 text-xs md:text-sm">
+      Деталі
+    </a>
+  </div>
+</div>

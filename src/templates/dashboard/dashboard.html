@@ -1,0 +1,443 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Дашборд - Camellia Flowers CRM{% endblock %}
+
+{% block mobile_title %}Дашборд{% endblock %}
+
+{% block extra_css %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="p-4 md:p-8">
+    <!-- Header with Period Switcher -->
+    <div class="mb-6 md:mb-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Дашборд</h2>
+          <p class="text-gray-500 mt-1 text-sm md:text-base">Огляд продажів та замовлень</p>
+        </div>
+
+        <!-- Period Switcher -->
+        <div class="flex gap-2">
+          <button onclick="changePeriod('day')"
+                  class="period-btn px-4 py-2 rounded-lg text-sm font-medium transition {% if current_period == 'day' %}bg-pink-500 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50{% endif %}"
+                  data-period="day">
+            День
+          </button>
+          <button onclick="changePeriod('week')"
+                  class="period-btn px-4 py-2 rounded-lg text-sm font-medium transition {% if current_period == 'week' %}bg-pink-500 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50{% endif %}"
+                  data-period="week">
+            Тиждень
+          </button>
+          <button onclick="changePeriod('month')"
+                  class="period-btn px-4 py-2 rounded-lg text-sm font-medium transition {% if current_period == 'month' %}bg-pink-500 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50{% endif %}"
+                  data-period="month">
+            Місяць
+          </button>
+          <button onclick="changePeriod('year')"
+                  class="period-btn px-4 py-2 rounded-lg text-sm font-medium transition {% if current_period == 'year' %}bg-pink-500 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50{% endif %}"
+                  data-period="year">
+            Рік
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+      <!-- Card 1 - Sales Today -->
+      <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-3 md:mb-4">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+            <span class="text-xl md:text-2xl">💰</span>
+          </div>
+          <span id="sales-growth"
+                class="{% if sales_growth_percent >= 0 %}text-green-500{% else %}text-red-500{% endif %} text-xs md:text-sm font-semibold">
+                    {% if sales_growth_percent >= 0 %}+{% endif %}{{ sales_growth_percent }}%
+                </span>
+        </div>
+        <h3 class="text-gray-500 text-xs md:text-sm font-medium">Продажі сьогодні</h3>
+        <p id="today-sales" class="text-2xl md:text-3xl font-bold text-gray-800 mt-2">
+          ₴{{ today_sales|floatformat:0 }}
+        </p>
+      </div>
+
+      <!-- Card 2 - Active Orders -->
+      <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-3 md:mb-4">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <span class="text-xl md:text-2xl">📦</span>
+          </div>
+          <span id="new-orders-badge" class="text-blue-500 text-xs md:text-sm font-semibold">
+                    {{ new_orders_count }} нових
+                </span>
+        </div>
+        <h3 class="text-gray-500 text-xs md:text-sm font-medium">Активні замовлення</h3>
+        <p id="active-orders" class="text-2xl md:text-3xl font-bold text-gray-800 mt-2">
+          {{ active_orders_count }}
+        </p>
+      </div>
+
+      <!-- Card 3 - Clients -->
+      <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-3 md:mb-4">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <span class="text-xl md:text-2xl">👥</span>
+          </div>
+          <span id="new-clients-badge" class="text-green-500 text-xs md:text-sm font-semibold">
+                    +{{ new_clients_count }}
+                </span>
+        </div>
+        <h3 class="text-gray-500 text-xs md:text-sm font-medium">Клієнти</h3>
+        <p id="total-clients" class="text-2xl md:text-3xl font-bold text-gray-800 mt-2">
+          {{ total_clients }}
+        </p>
+      </div>
+
+      <!-- Card 4 - Average Check -->
+      <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-3 md:mb-4">
+          <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <span class="text-xl md:text-2xl">📈</span>
+          </div>
+          <span id="period-label" class="text-purple-500 text-xs md:text-sm font-semibold">
+                    {{ period_name }}
+                </span>
+        </div>
+        <h3 class="text-gray-500 text-xs md:text-sm font-medium">Середній чек</h3>
+        <p id="average-check" class="text-2xl md:text-3xl font-bold text-gray-800 mt-2">
+          ₴{{ average_check|floatformat:0 }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+      <!-- Sales Chart -->
+      <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+        <div class="flex items-center justify-between mb-4 md:mb-6">
+          <div>
+            <h3 class="text-base md:text-lg font-semibold text-gray-800">
+              Продажі - <span id="chart-period-name">{{ period_name }}</span>
+            </h3>
+            <div id="peak-hour-container">
+              {% if is_day_period and peak_hour %}
+                <p id="peak-hour-info" class="text-xs text-gray-500 mt-1">
+                  Пікова година: <span
+                    class="font-semibold text-pink-600">{{ peak_hour.hour }}:00</span>
+                  (₴{{ peak_hour.sales|floatformat:0 }}, {{ peak_hour.orders }} замовлень)
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="h-64 md:h-80">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Top Products -->
+      <div
+          class="bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl shadow-sm p-4 md:p-6 text-white">
+        <h3 class="text-base md:text-lg font-semibold mb-4 md:mb-6">
+          Топ продукти - <span id="products-period-name">{{ period_name }}</span>
+        </h3>
+        <div id="top-products-list" class="space-y-3 md:space-y-4">
+          {% for product in top_products %}
+            <div class="p-3 bg-white/10 rounded-lg backdrop-blur">
+              <div class="flex items-center space-x-3">
+                <span class="text-xl md:text-2xl">{{ product.emoji }}</span>
+                <div>
+                  <p class="font-medium text-sm md:text-base">{{ product.name }}</p>
+                  <p class="text-xs md:text-sm opacity-80">{{ product.sales_count }} продажів</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="p-3 bg-white/10 rounded-lg backdrop-blur">
+              <p class="text-sm text-center opacity-80">Немає даних за цей період</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="p-4 md:p-6 border-b border-gray-100">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h3 class="text-base md:text-lg font-semibold text-gray-800">Останні замовлення</h3>
+          <a href="{% url 'orders:orders' %}"
+             class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition text-sm md:text-base text-center">
+            Всі замовлення
+          </a>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              ID
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              Клієнт
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">
+              Продукт
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              Сума
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              Статус
+            </th>
+          </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+          {% for order in recent_orders %}
+            <tr class="hover:bg-gray-50 transition">
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium text-gray-800">
+                #{{ order.id }}</td>
+              <td class="px-4 md:px-6 py-3 md:py-4">
+                <p class="text-xs md:text-sm font-medium text-gray-800">{{ order.client_name }}</p>
+                <p class="text-xs text-gray-500 hidden sm:block">{{ order.client_phone }}</p>
+              </td>
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden md:table-cell">{{ order.product_name }}</td>
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-gray-800">
+                ₴{{ order.total }}</td>
+              <td class="px-4 md:px-6 py-3 md:py-4">
+                            <span
+                                class="px-2 md:px-3 py-1 {% if order.status == 'processing' %}bg-yellow-100 text-yellow-700{% elif order.status == 'delivery' %}bg-blue-100 text-blue-700{% elif order.status == 'completed' %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-700{% endif %} rounded-full text-xs font-medium">
+                                {{ order.get_status_display }}
+                            </span>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                Немає замовлень
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+      let salesChart;
+      let currentPeriod = '{{ current_period }}';
+
+      // Ініціалізація графіку
+      function initChart(labels, data, period) {
+          const ctx = document.getElementById('salesChart');
+          if (!ctx) return;
+
+          // Знищуємо старий графік якщо є
+          if (salesChart) {
+              salesChart.destroy();
+          }
+
+          // Налаштування графіку залежно від періоду
+          const chartConfig = {
+              type: 'line',
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: 'Продажі (₴)',
+                      data: data,
+                      borderColor: '#ec4899',
+                      backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                      tension: 0.4,
+                      fill: true,
+                      pointBackgroundColor: '#ec4899',
+                      pointBorderColor: '#fff',
+                      pointBorderWidth: 2,
+                      pointRadius: period === 'day' ? 2 : 4,
+                      pointHoverRadius: period === 'day' ? 4 : 6
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                      legend: {
+                          display: false
+                      },
+                      tooltip: {
+                          callbacks: {
+                              label: function (context) {
+                                  let label = context.dataset.label || '';
+                                  if (label) {
+                                      label += ': ';
+                                  }
+                                  label += '₴' + context.parsed.y.toLocaleString('uk-UA', {
+                                      minimumFractionDigits: 0,
+                                      maximumFractionDigits: 0
+                                  });
+                                  return label;
+                              }
+                          }
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          grid: {
+                              color: 'rgba(0, 0, 0, 0.05)'
+                          },
+                          ticks: {
+                              callback: function (value) {
+                                  return '₴' + value.toLocaleString('uk-UA');
+                              }
+                          }
+                      },
+                      x: {
+                          grid: {
+                              display: period === 'day' ? false : false
+                          },
+                          ticks: {
+                              maxRotation: period === 'day' ? 45 : 0,
+                              minRotation: period === 'day' ? 45 : 0,
+                              font: {
+                                  size: period === 'day' ? 10 : 12
+                              }
+                          }
+                      }
+                  }
+              }
+          };
+
+          salesChart = new Chart(ctx, chartConfig);
+      }
+
+      // Оновлення інформації про пікову годину
+      function updatePeakHourInfo(data) {
+          const peakHourContainer = document.getElementById('peak-hour-container');
+
+          if (!peakHourContainer) return;
+
+          if (data.period === 'day' && data.peak_hour) {
+              // Показуємо інформацію про пікову годину
+              peakHourContainer.innerHTML = `
+                <p id="peak-hour-info" class="text-xs text-gray-500 mt-1">
+                    Пікова година: <span class="font-semibold text-pink-600">${data.peak_hour.hour}:00</span>
+                    (₴${Math.round(data.peak_hour.sales).toLocaleString('uk-UA')}, ${data.peak_hour.orders} замовлень)
+                </p>
+            `;
+          } else {
+              // Очищаємо для інших періодів
+              peakHourContainer.innerHTML = '';
+          }
+      }
+
+      // Зміна періоду
+      function changePeriod(period) {
+          currentPeriod = period;
+
+          // Оновлюємо активну кнопку
+          document.querySelectorAll('.period-btn').forEach(btn => {
+              if (btn.dataset.period === period) {
+                  btn.classList.remove('bg-white', 'text-gray-600', 'hover:bg-gray-50');
+                  btn.classList.add('bg-pink-500', 'text-white');
+              } else {
+                  btn.classList.remove('bg-pink-500', 'text-white');
+                  btn.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-50');
+              }
+          });
+
+          // Завантажуємо нові дані
+          loadDashboardData(period);
+      }
+
+      // Завантаження даних через AJAX
+      function loadDashboardData(period) {
+          fetch(`?period=${period}`, {
+              headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+              }
+          })
+              .then(response => response.json())
+              .then(data => {
+                  updateDashboard(data);
+              })
+              .catch(error => {
+                  console.error('Помилка завантаження даних:', error);
+              });
+      }
+
+      // Оновлення даних на дашборді
+      function updateDashboard(data) {
+          console.log('Отримані дані:', data); // Debug
+          console.log('Період:', data.period); // Debug
+          console.log('Пікова година:', data.peak_hour); // Debug
+
+          // Оновлюємо картки
+          document.getElementById('today-sales').textContent = '₴' + Math.round(data.today_sales).toLocaleString('uk-UA');
+
+          const growthElem = document.getElementById('sales-growth');
+          growthElem.textContent = (data.sales_growth_percent >= 0 ? '+' : '') + data.sales_growth_percent + '%';
+          growthElem.className = data.sales_growth_percent >= 0
+              ? 'text-green-500 text-xs md:text-sm font-semibold'
+              : 'text-red-500 text-xs md:text-sm font-semibold';
+
+          document.getElementById('active-orders').textContent = data.active_orders_count;
+          document.getElementById('new-orders-badge').textContent = data.new_orders_count + ' нових';
+          document.getElementById('total-clients').textContent = data.total_clients;
+          document.getElementById('new-clients-badge').textContent = '+' + data.new_clients_count;
+          document.getElementById('average-check').textContent = '₴' + Math.round(data.average_check).toLocaleString('uk-UA');
+          document.getElementById('period-label').textContent = data.period_name;
+          document.getElementById('chart-period-name').textContent = data.period_name;
+          document.getElementById('products-period-name').textContent = data.period_name;
+
+          // Оновлюємо графік з урахуванням періоду
+          initChart(data.sales_labels, data.sales_data, data.period || currentPeriod);
+
+          // Оновлюємо інформацію про пікову годину (тільки для дня)
+          updatePeakHourInfo(data);
+
+          // Оновлюємо топ продукти
+          const productsList = document.getElementById('top-products-list');
+          if (data.top_products && data.top_products.length > 0) {
+              productsList.innerHTML = data.top_products.map(product => `
+                <div class="p-3 bg-white/10 rounded-lg backdrop-blur">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xl md:text-2xl">${product.emoji}</span>
+                        <div>
+                            <p class="font-medium text-sm md:text-base">${product.name}</p>
+                            <p class="text-xs md:text-sm opacity-80">${product.sales_count} продажів</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+          } else {
+              productsList.innerHTML = `
+                <div class="p-3 bg-white/10 rounded-lg backdrop-blur">
+                    <p class="text-sm text-center opacity-80">Немає даних за цей період</p>
+                </div>
+            `;
+          }
+      }
+
+      // Ініціалізація при завантаженні сторінки
+      document.addEventListener('DOMContentLoaded', function () {
+          const labels = {{ sales_labels|safe }};
+          const data = {{ sales_data|safe }};
+          initChart(labels, data, currentPeriod);
+      });
+  </script>
+{% endblock %}

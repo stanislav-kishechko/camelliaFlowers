@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід - Camellia Flowers CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-white to-rose-100">
+
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <!-- Logo -->
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white text-4xl">🌸</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800">Camellia Flowers</h1>
+                    <p class="text-gray-500 mt-2">CRM Система</p>
+                </div>
+
+                <!-- Error Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% elif message.tags == 'success' %}bg-green-50 text-green-700{% else %}bg-blue-50 text-blue-700{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Login Form -->
+                <form method="post" action="{% url 'accounts:login' %}" class="space-y-4">
+                    {% csrf_token %}
+
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Email або ім'я користувача</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                            placeholder="manager@camellia.com"
+                            value="{{ request.POST.username }}"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Пароль</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                            placeholder="••••••••"
+                        >
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition"
+                    >
+                        Увійти
+                    </button>
+                </form>
+
+                <!-- Registration Link -->
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Ще не маєте акаунту?
+                        <a href="{% url 'accounts:register' %}" class="text-pink-500 hover:text-pink-600 font-medium">Зареєструватися</a>
+                    </p>
+                </div>
+
+                <!-- Demo credentials -->
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <p class="text-xs text-gray-500 text-center mb-2">Тестові дані для входу:</p>
+                    <p class="text-xs text-gray-700 text-center font-mono">manager@camellia.com / password123</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-6 text-sm text-gray-500">
+                <p>&copy; 2025 Camellia Flowers. Всі права захищені.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+<div class="toast px-6 py-4 rounded-lg shadow-lg text-white
+            {% if type == 'success' %}bg-green-500
+            {% elif type == 'error' %}bg-red-500
+            {% elif type == 'warning' %}bg-yellow-500
+            {% else %}bg-blue-500{% endif %}">
+  <div class="flex items-center space-x-2">
+        <span class="text-xl">
+            {% if type == 'success' %}✅
+            {% elif type == 'error' %}❌
+            {% elif type == 'warning' %}⚠️
+            {% else %}ℹ️{% endif %}
+        </span>
+    <span>{{ message }}</span>
+  </div>
+</div>

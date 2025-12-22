@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Звіти - Camellia Flowers CRM{% endblock %}
+
+{% block mobile_title %}Звіти{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="p-4 md:p-8">
+    <!-- Header -->
+    <div class="mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Звіти та аналітика</h2>
+                <p class="text-gray-500 mt-1 text-sm md:text-base">Детальна статистика продажів та ефективності</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <select class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+                    <option>Цей тиждень</option>
+                    <option>Цей місяць</option>
+                    <option>Цей квартал</option>
+                    <option>Цей рік</option>
+                    <option>Всі дані</option>
+                </select>
+                <button class="px-4 md:px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition flex items-center justify-center space-x-2 text-sm md:text-base">
+                    <span>📥</span>
+                    <span>Експорт</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div class="bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl p-4 md:p-6 text-white">
+            <div class="flex items-center justify-between mb-3 md:mb-4">
+                <span class="text-3xl md:text-4xl">💰</span>
+                <span class="text-xs md:text-sm bg-white/20 px-2 py-1 rounded-full">+18.5%</span>
+            </div>
+            <p class="text-xs md:text-sm opacity-90 mb-1">Загальний дохід</p>
+            <p class="text-2xl md:text-3xl font-bold">₴{{ total_revenue|default:"156,890" }}</p>
+            <p class="text-xs opacity-75 mt-2">За поточний місяць</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-4 md:p-6 text-white">
+            <div class="flex items-center justify-between mb-3 md:mb-4">
+                <span class="text-3xl md:text-4xl">📦</span>
+                <span class="text-xs md:text-sm bg-white/20 px-2 py-1 rounded-full">+12.3%</span>
+            </div>
+            <p class="text-xs md:text-sm opacity-90 mb-1">Замовлень виконано</p>
+            <p class="text-2xl md:text-3xl font-bold">{{ completed_orders|default:"142" }}</p>
+            <p class="text-xs opacity-75 mt-2">За поточний місяць</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 md:p-6 text-white">
+            <div class="flex items-center justify-between mb-3 md:mb-4">
+                <span class="text-3xl md:text-4xl">⭐</span>
+                <span class="text-xs md:text-sm bg-white/20 px-2 py-1 rounded-full">+0.3</span>
+            </div>
+            <p class="text-xs md:text-sm opacity-90 mb-1">Середній рейтинг</p>
+            <p class="text-2xl md:text-3xl font-bold">{{ avg_rating|default:"4.8" }}</p>
+            <p class="text-xs opacity-75 mt-2">За останні 30 днів</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 md:p-6 text-white">
+            <div class="flex items-center justify-between mb-3 md:mb-4">
+                <span class="text-3xl md:text-4xl">👥</span>
+                <span class="text-xs md:text-sm bg-white/20 px-2 py-1 rounded-full">+{{ new_clients|default:"28" }}</span>
+            </div>
+            <p class="text-xs md:text-sm opacity-90 mb-1">Нові клієнти</p>
+            <p class="text-2xl md:text-3xl font-bold">{{ new_clients|default:"28" }}</p>
+            <p class="text-xs opacity-75 mt-2">За поточний місяць</p>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <!-- Revenue Chart -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <div class="flex items-center justify-between mb-4 md:mb-6">
+                <h3 class="text-base md:text-lg font-semibold text-gray-800">Динаміка продажів</h3>
+                <select class="px-3 py-1 border border-gray-200 rounded-lg text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <option>За місяць</option>
+                    <option>За тиждень</option>
+                    <option>За день</option>
+                </select>
+            </div>
+            <div class="h-64 md:h-80">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Orders by Status -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <div class="flex items-center justify-between mb-4 md:mb-6">
+                <h3 class="text-base md:text-lg font-semibold text-gray-800">Розподіл замовлень</h3>
+            </div>
+            <div class="h-64 md:h-80">
+                <canvas id="ordersChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Performance -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+        <!-- Top Products -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Топ-10 продуктів</h3>
+            <div class="space-y-3 md:space-y-4">
+                {% for product in top_products %}
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-red-400 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-base md:text-xl">{{ product.emoji }}</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800 text-sm md:text-base">{{ product.name }}</p>
+                            <p class="text-xs text-gray-500">{{ product.sales_count }} продажів</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-gray-800 text-sm md:text-base">₴{{ product.revenue }}</p>
+                        <p class="text-xs text-green-600">+{{ product.growth }}%</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-gray-500 py-4">Немає даних</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Manager Performance -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Ефективність менеджерів</h3>
+            <div class="space-y-4">
+                {% for manager in managers %}
+                <div class="p-4 {% if forloop.first %}bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-100{% else %}bg-gray-50{% endif %} rounded-lg">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 text-sm md:text-base">
+                            {{ manager.initials }}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800 text-sm md:text-base">{{ manager.name }}</p>
+                            <p class="text-xs text-gray-500">{% if forloop.first %}Топ менеджер{% else %}Менеджер{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <p class="text-xs text-gray-500">Продажі</p>
+                            <p class="text-base md:text-lg font-bold text-pink-600">₴{{ manager.sales }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Замовлень</p>
+                            <p class="text-base md:text-lg font-bold text-gray-800">{{ manager.orders_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-gray-500 py-4">Немає даних</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Analytics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <!-- Customer Segments -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Сегменти клієнтів</h3>
+            <div class="h-64 md:h-80">
+                <canvas id="customerChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Методи оплати</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-base md:text-xl">💳</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800 text-sm md:text-base">Картка онлайн</p>
+                            <p class="text-xs text-gray-500">78 транзакцій</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-gray-800 text-sm md:text-base">₴89,450</p>
+                        <p class="text-xs text-gray-500">57%</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-base md:text-xl">💵</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800 text-sm md:text-base">Готівка</p>
+                            <p class="text-xs text-gray-500">52 транзакції</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-gray-800 text-sm md:text-base">₴53,890</p>
+                        <p class="text-xs text-gray-500">34%</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-base md:text-xl">📱</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800 text-sm md:text-base">Apple/Google Pay</p>
+                            <p class="text-xs text-gray-500">12 транзакцій</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-gray-800 text-sm md:text-base">₴13,550</p>
+                        <p class="text-xs text-gray-500">9%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Analytics -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Продажі по годинах</h3>
+        <div class="h-64 md:h-80">
+            <canvas id="timeChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart');
+    if (revenueCtx) {
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'],
+                datasets: [{
+                    label: 'Дохід (₴)',
+                    data: {{ revenue_data|safe|default:"[85000, 92000, 98000, 105000, 112000, 128000, 135000, 142000, 138000, 145000, 152000, 156890]" }},
+                    borderColor: '#ec4899',
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#ec4899',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₴' + (value/1000) + 'k';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Orders by Status Chart
+    const ordersCtx = document.getElementById('ordersChart');
+    if (ordersCtx) {
+        new Chart(ordersCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Завершені', 'В обробці', 'Доставка', 'Нові'],
+                datasets: [{
+                    data: {{ orders_by_status|safe|default:"[85, 32, 18, 12]" }},
+                    backgroundColor: [
+                        '#10b981',
+                        '#f59e0b',
+                        '#3b82f6',
+                        '#6b7280'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Customer Segments Chart
+    const customerCtx = document.getElementById('customerChart');
+    if (customerCtx) {
+        new Chart(customerCtx, {
+            type: 'pie',
+            data: {
+                labels: ['VIP клієнти', 'Постійні', 'Нові', 'Разові'],
+                datasets: [{
+                    data: {{ customer_segments|safe|default:"[45, 98, 87, 94]" }},
+                    backgroundColor: [
+                        '#f59e0b',
+                        '#10b981',
+                        '#3b82f6',
+                        '#6b7280'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Time Analytics Chart
+    const timeCtx = document.getElementById('timeChart');
+    if (timeCtx) {
+        new Chart(timeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'],
+                datasets: [{
+                    label: 'Кількість замовлень',
+                    data: {{ hourly_orders|safe|default:"[3, 7, 12, 18, 24, 28, 22, 26, 31, 27, 19, 8]" }},
+                    backgroundColor: '#ec4899',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 5
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

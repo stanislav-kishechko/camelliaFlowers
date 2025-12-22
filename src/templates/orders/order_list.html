@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Замовлення - Camellia Flowers CRM{% endblock %}
+
+{% block mobile_title %}Замовлення{% endblock %}
+
+{% block content %}
+  <div class="p-4 md:p-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Замовлення</h2>
+          <p class="text-gray-500 mt-1 text-sm md:text-base">Управління замовленнями квітів</p>
+        </div>
+        <button onclick="openNewOrderModal()"
+                class="px-4 md:px-6 py-2 md:py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition flex items-center justify-center space-x-2 text-sm md:text-base">
+          <span>+</span>
+          <span>Нове замовлення</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters and View Toggle -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row gap-3 flex-1">
+          <div class="relative flex-1 min-w-0">
+            <input type="text"
+                   id="searchInput"
+                   placeholder="Пошук по клієнту, ID..."
+                   value="{{ search_query }}"
+                   class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+            <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
+          </div>
+          <select id="dateRangeFilter"
+                  class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+            <option value="all" {% if date_range == 'all' %}selected{% endif %}>Всі замовлення
+            </option>
+            <option value="today" {% if date_range == 'today' %}selected{% endif %}>Сьогодні
+            </option>
+            <option value="week" {% if date_range == 'week' %}selected{% endif %}>Цей тиждень
+            </option>
+            <option value="month" {% if date_range == 'month' %}selected{% endif %}>Цей місяць
+            </option>
+          </select>
+          <select id="statusFilter"
+                  class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base">
+            <option value="all" {% if status_filter == 'all' %}selected{% endif %}>Всі статуси
+            </option>
+            <option value="new" {% if status_filter == 'new' %}selected{% endif %}>Нові</option>
+            <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>В
+              обробці
+            </option>
+            <option value="delivery" {% if status_filter == 'delivery' %}selected{% endif %}>
+              Доставка
+            </option>
+            <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>
+              Завершені
+            </option>
+          </select>
+        </div>
+
+        <div class="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+          <button onclick="switchView('kanban')" id="view-kanban"
+                  class="px-3 md:px-4 py-2 bg-white rounded-md shadow-sm font-medium text-gray-800 transition text-sm">
+            Канбан
+          </button>
+          <button onclick="switchView('table')" id="view-table"
+                  class="px-3 md:px-4 py-2 rounded-md font-medium text-gray-600 hover:text-gray-800 transition text-sm">
+            Таблиця
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kanban View -->
+    <div id="orders-kanban" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+      <!-- New Orders Column -->
+      <div>
+        <div class="bg-gray-100 rounded-t-xl px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 bg-gray-400 rounded-full"></span>
+            <h3 class="font-semibold text-gray-700 text-sm md:text-base">Нові</h3>
+            <span
+                class="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">{{ new_orders.count }}</span>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-b-xl p-3 md:p-4 space-y-3 min-h-[200px]">
+          {% for order in new_orders %}
+            {% include 'orders/partials/order_card_partial.html' with order=order status_color='gray' %}
+          {% empty %}
+            <p class="text-center text-gray-400 text-sm py-4">Немає замовлень</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Processing Orders Column -->
+      <div>
+        <div class="bg-yellow-50 rounded-t-xl px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 bg-yellow-400 rounded-full"></span>
+            <h3 class="font-semibold text-yellow-700 text-sm md:text-base">В обробці</h3>
+            <span
+                class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-medium">{{ processing_orders.count }}</span>
+          </div>
+        </div>
+        <div class="bg-yellow-50/30 rounded-b-xl p-3 md:p-4 space-y-3 min-h-[200px]">
+          {% for order in processing_orders %}
+            {% include 'orders/partials/order_card_partial.html' with order=order status_color='yellow' %}
+          {% empty %}
+            <p class="text-center text-gray-400 text-sm py-4">Немає замовлень</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Delivery Orders Column -->
+      <div>
+        <div class="bg-blue-50 rounded-t-xl px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
+            <h3 class="font-semibold text-blue-700 text-sm md:text-base">Доставка</h3>
+            <span
+                class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">{{ delivery_orders.count }}</span>
+          </div>
+        </div>
+        <div class="bg-blue-50/30 rounded-b-xl p-3 md:p-4 space-y-3 min-h-[200px]">
+          {% for order in delivery_orders %}
+            {% include 'orders/partials/order_card_partial.html' with order=order status_color='blue' %}
+          {% empty %}
+            <p class="text-center text-gray-400 text-sm py-4">Немає замовлень</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Completed Orders Column -->
+      <div>
+        <div class="bg-green-50 rounded-t-xl px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 bg-green-400 rounded-full"></span>
+            <h3 class="font-semibold text-green-700 text-sm md:text-base">Завершені</h3>
+            <span
+                class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">{{ completed_orders.count }}</span>
+          </div>
+        </div>
+        <div class="bg-green-50/30 rounded-b-xl p-3 md:p-4 space-y-3 min-h-[200px]">
+          {% for order in completed_orders %}
+            {% include 'orders/partials/order_card_partial.html' with order=order status_color='green' %}
+          {% empty %}
+            <p class="text-center text-gray-400 text-sm py-4">Немає замовлень</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Table View -->
+    <div id="orders-table"
+         class="hidden bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              ID
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              Дата
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              Клієнт
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase hidden lg:table-cell">
+              Продукт
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase hidden xl:table-cell">
+              Адреса
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              Сума
+            </th>
+            <th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs font-semibold text-gray-600 uppercase">
+              Статус
+            </th>
+          </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+          {% for order in orders %}
+            <tr class="hover:bg-gray-50 transition cursor-pointer"
+                onclick="window.location.href='{% url 'orders:order_detail' order.pk %}'">
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium text-gray-800">
+                #{{ order.id }}</td>
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600">{{ order.created_at|date:"d.m.Y" }}</td>
+              <td class="px-4 md:px-6 py-3 md:py-4">
+                <p class="text-xs md:text-sm font-medium text-gray-800">{{ order.client.full_name }}</p>
+                <p class="text-xs text-gray-500">{{ order.client.phone }}</p>
+              </td>
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden lg:table-cell">
+                {{ order.product.emoji|default:"🌹" }} {{ order.product.name }}
+              </td>
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden xl:table-cell">
+                {{ order.delivery_address|default:"-"|truncatewords:3 }}
+              </td>
+              <td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-gray-800">
+                ₴{{ order.total_price }}</td>
+              <td class="px-4 md:px-6 py-3 md:py-4">
+                <span
+                    class="px-2 md:px-3 py-1 {% if order.status == 'new' %}bg-gray-100 text-gray-700{% elif order.status == 'processing' %}bg-yellow-100 text-yellow-700{% elif order.status == 'delivery' %}bg-blue-100 text-blue-700{% elif order.status == 'completed' %}bg-green-100 text-green-700{% endif %} rounded-full text-xs font-medium">
+                  {{ order.get_status_display }}
+                </span>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" class="px-6 py-8 text-center text-gray-500">Немає замовлень</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {% if is_paginated %}
+        <div
+            class="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-gray-100 gap-4">
+          <p class="text-sm text-gray-600">
+            Показано {{ page_obj.start_index }}-{{ page_obj.end_index }}
+            з {{ page_obj.paginator.count }}
+          </p>
+          <div class="flex space-x-2">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&status={{ status_filter }}&date_range={{ date_range }}"
+                 class="px-3 md:px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition text-sm">Попередня</a>
+            {% endif %}
+            <span
+                class="px-3 md:px-4 py-2 bg-pink-500 text-white rounded-lg text-sm">{{ page_obj.number }}</span>
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&status={{ status_filter }}&date_range={{ date_range }}"
+                 class="px-3 md:px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition text-sm">Наступна</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% include 'orders/partials/order_add_partial.html' %}
+  {% include 'orders/partials/order_delete_partial.html' %}
+
+  <!-- JSON Data for JavaScript -->
+  <script id="products-data" type="application/json">{{ products_json|safe }}</script>
+  <script id="clients-data" type="application/json">{{ clients_json|safe }}</script>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/order_modals.js' %}"></script>
+  <script>
+      // View Switcher
+      function switchView(view) {
+          const kanbanView = document.getElementById('orders-kanban');
+          const tableView = document.getElementById('orders-table');
+          const kanbanBtn = document.getElementById('view-kanban');
+          const tableBtn = document.getElementById('view-table');
+
+          if (view === 'kanban') {
+              kanbanView.classList.remove('hidden');
+              tableView.classList.add('hidden');
+              kanbanBtn.classList.add('bg-white', 'shadow-sm');
+              kanbanBtn.classList.remove('text-gray-600');
+              tableBtn.classList.remove('bg-white', 'shadow-sm');
+              tableBtn.classList.add('text-gray-600');
+          } else {
+              kanbanView.classList.add('hidden');
+              tableView.classList.remove('hidden');
+              tableBtn.classList.add('bg-white', 'shadow-sm');
+              tableBtn.classList.remove('text-gray-600');
+              kanbanBtn.classList.remove('bg-white', 'shadow-sm');
+              kanbanBtn.classList.add('text-gray-600');
+          }
+
+          localStorage.setItem('ordersView', view);
+      }
+
+      // Restore view preference
+      document.addEventListener('DOMContentLoaded', function () {
+          const savedView = localStorage.getItem('ordersView');
+          if (savedView) {
+              switchView(savedView);
+          }
+      });
+
+      // Filters functionality
+      const searchInput = document.getElementById('searchInput');
+      const statusFilter = document.getElementById('statusFilter');
+      const dateRangeFilter = document.getElementById('dateRangeFilter');
+
+      function applyFilters() {
+          const searchValue = searchInput.value;
+          const statusValue = statusFilter.value;
+          const dateRangeValue = dateRangeFilter.value;
+
+          const url = new URL(window.location.href);
+          url.searchParams.set('search', searchValue);
+          url.searchParams.set('status', statusValue);
+          url.searchParams.set('date_range', dateRangeValue);
+          url.searchParams.set('page', '1');
+
+          window.location.href = url.toString();
+      }
+
+      let searchTimeout;
+      searchInput.addEventListener('input', function () {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(applyFilters, 500);
+      });
+
+      statusFilter.addEventListener('change', applyFilters);
+      dateRangeFilter.addEventListener('change', applyFilters);
+  </script>
+{% endblock %}
