@@ -242,17 +242,14 @@
       let salesChart;
       let currentPeriod = '{{ current_period }}';
 
-      // Ініціалізація графіку
       function initChart(labels, data, period) {
           const ctx = document.getElementById('salesChart');
           if (!ctx) return;
 
-          // Знищуємо старий графік якщо є
           if (salesChart) {
               salesChart.destroy();
           }
 
-          // Налаштування графіку залежно від періоду
           const chartConfig = {
               type: 'line',
               data: {
@@ -325,14 +322,12 @@
           salesChart = new Chart(ctx, chartConfig);
       }
 
-      // Оновлення інформації про пікову годину
       function updatePeakHourInfo(data) {
           const peakHourContainer = document.getElementById('peak-hour-container');
 
           if (!peakHourContainer) return;
 
           if (data.period === 'day' && data.peak_hour) {
-              // Показуємо інформацію про пікову годину
               peakHourContainer.innerHTML = `
                 <p id="peak-hour-info" class="text-xs text-gray-500 mt-1">
                     Пікова година: <span class="font-semibold text-pink-600">${data.peak_hour.hour}:00</span>
@@ -340,16 +335,13 @@
                 </p>
             `;
           } else {
-              // Очищаємо для інших періодів
               peakHourContainer.innerHTML = '';
           }
       }
 
-      // Зміна періоду
       function changePeriod(period) {
           currentPeriod = period;
 
-          // Оновлюємо активну кнопку
           document.querySelectorAll('.period-btn').forEach(btn => {
               if (btn.dataset.period === period) {
                   btn.classList.remove('bg-white', 'text-gray-600', 'hover:bg-gray-50');
@@ -360,11 +352,9 @@
               }
           });
 
-          // Завантажуємо нові дані
           loadDashboardData(period);
       }
 
-      // Завантаження даних через AJAX
       function loadDashboardData(period) {
           fetch(`?period=${period}`, {
               headers: {
@@ -380,13 +370,7 @@
               });
       }
 
-      // Оновлення даних на дашборді
       function updateDashboard(data) {
-          console.log('Отримані дані:', data); // Debug
-          console.log('Період:', data.period); // Debug
-          console.log('Пікова година:', data.peak_hour); // Debug
-
-          // Оновлюємо картки
           document.getElementById('today-sales').textContent = '₴' + Math.round(data.today_sales).toLocaleString('uk-UA');
 
           const growthElem = document.getElementById('sales-growth');
@@ -404,13 +388,10 @@
           document.getElementById('chart-period-name').textContent = data.period_name;
           document.getElementById('products-period-name').textContent = data.period_name;
 
-          // Оновлюємо графік з урахуванням періоду
           initChart(data.sales_labels, data.sales_data, data.period || currentPeriod);
 
-          // Оновлюємо інформацію про пікову годину (тільки для дня)
           updatePeakHourInfo(data);
 
-          // Оновлюємо топ продукти
           const productsList = document.getElementById('top-products-list');
           if (data.top_products && data.top_products.length > 0) {
               productsList.innerHTML = data.top_products.map(product => `
@@ -433,7 +414,6 @@
           }
       }
 
-      // Ініціалізація при завантаженні сторінки
       document.addEventListener('DOMContentLoaded', function () {
           const labels = {{ sales_labels|safe }};
           const data = {{ sales_data|safe }};

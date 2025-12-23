@@ -15,13 +15,13 @@ from apps.products.models import Product
 
 class Order(AbstractDatetimeModel):
     """
-    Represents an order made by a client, tracking details necessary for processing, delivery, and status
-    management.
+    Represents an order made by a client, tracking details necessary for processing,
+    delivery, and status management.
 
-    This class models an order with attributes such as client information, total price, delivery requirements,
-    status, and notes. It provides methods for calculating the total price, transitioning between statuses,
-    updating order information, and more. It ensures validation related to delivery requirements and supports
-    tracking status history over time.
+    This class models an order with attributes such as client information, total price,
+    delivery requirements, status, and notes. It provides methods for calculating the total price,
+    transitioning between statuses, updating order information, and more. It ensures validation
+    related to delivery requirements and supports tracking status history over time.
 
     :ivar client: The client who placed the order.
     :type client: Client

@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function showTab(tabName) {
-    // Hide all content
     const tabs = ['personal', 'security', 'notifications', 'preferences'];
     tabs.forEach(tab => {
         const content = document.getElementById('content-' + tab);
@@ -308,19 +307,11 @@ function initSearch(inputId, targetClass) {
     });
 }
 
-// ==========================================
-// CONFIRMATION DIALOG
-// ==========================================
-
 function confirmAction(message, callback) {
     if (confirm(message)) {
         callback();
     }
 }
-
-// ==========================================
-// LOADING STATE
-// ==========================================
 
 function showLoading() {
     const overlay = document.createElement('div');
@@ -337,11 +328,6 @@ function hideLoading() {
     }
 }
 
-// ==========================================
-// HTMX INTEGRATION
-// ==========================================
-
-// Show loading on HTMX requests
 document.addEventListener('htmx:beforeRequest', function() {
     showLoading();
 });
@@ -359,16 +345,9 @@ document.addEventListener('htmx:afterOnLoad', function(event) {
         if (response.message) {
             showToast(response.message, response.type || 'success');
         }
-    } catch (e) {
-        // Response is not JSON, ignore
-    }
+    } catch (e) {}
 });
 
-// ==========================================
-// PRODUCT EDIT PAGE
-// ==========================================
-
-// Live preview update
 function updateProductPreview() {
     const name = document.getElementById('id_name')?.value || 'Назва продукту';
     const price = document.getElementById('id_price')?.value || '0';
@@ -376,7 +355,6 @@ function updateProductPreview() {
     const emoji = document.getElementById('id_emoji')?.value || '🌸';
     const description = document.getElementById('id_description')?.value || 'Опис продукту';
 
-    // Update preview
     const previewName = document.getElementById('preview-name');
     const previewPrice = document.getElementById('preview-price');
     const previewStock = document.getElementById('preview-stock');
@@ -389,7 +367,6 @@ function updateProductPreview() {
     if (previewEmoji) previewEmoji.textContent = emoji;
     if (previewDescription) previewDescription.textContent = description;
 
-    // Update stock badge
     const stockBadge = document.getElementById('preview-stock-badge');
     if (stockBadge) {
         if (stock > 10) {
@@ -428,11 +405,6 @@ function viewOrders() {
     window.location.href = '/orders/';
 }
 
-// ==========================================
-// UTILITY FUNCTIONS
-// ==========================================
-
-// Format currency
 function formatCurrency(amount) {
     return new Intl.NumberFormat('uk-UA', {
         style: 'currency',
@@ -442,7 +414,6 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
-// Format date
 function formatDate(date, format = 'short') {
     const options = format === 'long'
         ? { year: 'numeric', month: 'long', day: 'numeric' }
@@ -451,7 +422,6 @@ function formatDate(date, format = 'short') {
     return new Intl.DateTimeFormat('uk-UA', options).format(new Date(date));
 }
 
-// Debounce function for search
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -505,7 +475,6 @@ function toggleSidebar() {
         }
     }
 
-    // Handle window resize
     window.addEventListener('resize', function () {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('mobile-overlay');

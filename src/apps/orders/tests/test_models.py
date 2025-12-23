@@ -1,8 +1,8 @@
 import pytest
 from django.core.exceptions import ValidationError
 
-from apps.orders.models import OrderStatusHistory
 from apps.orders.enums import OrderStatusEnum
+from apps.orders.models import OrderStatusHistory
 
 
 @pytest.mark.django_db

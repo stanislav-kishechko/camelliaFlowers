@@ -293,7 +293,6 @@
   <script src="{% static 'js/order_modals.js' %}"></script>
 
   <script>
-      // Зміна статусу замовлення
       function changeOrderStatus(orderId, newStatus) {
           if (!newStatus) return;
 
@@ -304,7 +303,6 @@
               return;
           }
 
-          // Показати індикатор завантаження
           const statusSelect = document.getElementById('status_select');
           const originalHTML = statusSelect.innerHTML;
           statusSelect.disabled = true;
@@ -324,7 +322,6 @@
               .then(response => response.json())
               .then(data => {
                   if (data.success) {
-                      // Показати успішне повідомлення
                       const successMsg = document.createElement('div');
                       successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
                       successMsg.innerHTML = `

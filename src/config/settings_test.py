@@ -1,9 +1,9 @@
-from .settings import *  # noqa
+from .settings import *
 
-# Test settings override
 DEBUG = True
 
-# Use fast password hasher for tests
+SECRET_KEY = "testsecretkey"
+
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
@@ -18,12 +18,24 @@ DATABASES = {
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
-# Disable Cloudinary real network usage in tests
-cloudinary.config(
-    cloud_name="test",
-    api_key="test",
-    api_secret="test",
-)
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    "django_htmx",
+    "cloudinary",
+
+    "apps.products",
+    "apps.accounts",
+    "apps.clients",
+    "apps.orders"
+]
+
+ROOT_URLCONF = "config.urls"
 
 STORAGES = {
     "default": {

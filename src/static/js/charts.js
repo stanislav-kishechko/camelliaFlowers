@@ -1,18 +1,6 @@
-// Camellia Flowers CRM - Charts Configuration
-
-// ========================
-// CHART DEFAULTS
-// ========================
-
-// Set default font family for all charts
 Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.color = '#6b7280';
 
-// ========================
-// DASHBOARD CHARTS
-// ========================
-
-// Sales Chart (Dashboard)
 function initSalesChart() {
     const ctx = document.getElementById('salesChart');
     if (!ctx) return;
@@ -85,11 +73,6 @@ function initSalesChart() {
     });
 }
 
-// ========================
-// REPORTS CHARTS
-// ========================
-
-// Revenue Chart (Reports)
 function initRevenueChart() {
     const ctx = document.getElementById('revenueChart');
     if (!ctx) return;
@@ -154,7 +137,6 @@ function initRevenueChart() {
     });
 }
 
-// Orders by Status Chart (Reports)
 function initOrdersChart() {
     const ctx = document.getElementById('ordersChart');
     if (!ctx) return;
@@ -205,7 +187,6 @@ function initOrdersChart() {
     });
 }
 
-// Customer Segments Chart (Reports)
 function initCustomerChart() {
     const ctx = document.getElementById('customerChart');
     if (!ctx) return;
@@ -256,7 +237,6 @@ function initCustomerChart() {
     });
 }
 
-// Time Analytics Chart (Reports)
 function initTimeChart() {
     const ctx = document.getElementById('timeChart');
     if (!ctx) return;
@@ -319,11 +299,6 @@ function initTimeChart() {
     });
 }
 
-// ========================
-// CHART UPDATE FUNCTIONS
-// ========================
-
-// Update chart data dynamically
 function updateChart(chartId, newData) {
     const chart = Chart.getChart(chartId);
     if (chart) {
@@ -332,17 +307,12 @@ function updateChart(chartId, newData) {
     }
 }
 
-// Destroy chart
 function destroyChart(chartId) {
     const chart = Chart.getChart(chartId);
     if (chart) {
         chart.destroy();
     }
 }
-
-// ========================
-// MINI CHARTS (SPARKLINES)
-// ========================
 
 function createSparkline(canvasId, data, color = '#ec4899') {
     const ctx = document.getElementById(canvasId);
@@ -389,32 +359,23 @@ function createSparkline(canvasId, data, color = '#ec4899') {
     });
 }
 
-// ========================
-// INITIALIZE ALL CHARTS
-// ========================
-
 function initAllCharts() {
-    // Dashboard
     initSalesChart();
 
-    // Reports
     initRevenueChart();
     initOrdersChart();
     initCustomerChart();
     initTimeChart();
 }
 
-// Auto-initialize charts when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     initAllCharts();
 });
 
-// Re-initialize charts on window resize (debounced)
 let resizeTimeout;
 window.addEventListener('resize', function() {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(function() {
-        // Destroy and recreate charts for better responsiveness
         Chart.helpers.each(Chart.instances, function(instance) {
             instance.resize();
         });

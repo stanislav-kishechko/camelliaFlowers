@@ -32,7 +32,7 @@ class ClientQuerySet(models.QuerySet):
             | Q(email__icontains=query)
         )
 
-    def by_type(self, client_type: str) -> "ClientQuerySet":
+    def by_type(self, client_type: str) -> ClientQuerySet:
         """
         Filters the queryset based on the specified client type. The client types include
         'active', 'vip', 'new', and 'inactive'. Each type applies a different filter logic
@@ -59,7 +59,7 @@ class ClientQuerySet(models.QuerySet):
 
         return self
 
-    def by_city(self, city: str | None) -> "ClientQuerySet":
+    def by_city(self, city: str | None) -> ClientQuerySet:
         """
         Filters the queryset by the specified city. If the city parameter is not provided
         or is None, the method returns the original queryset unfiltered. Otherwise, it
@@ -77,7 +77,7 @@ class ClientQuerySet(models.QuerySet):
 
         return self.filter(city__iexact=city)
 
-    def sort_by(self, sort_option: str) -> "ClientQuerySet":
+    def sort_by(self, sort_option: str) -> ClientQuerySet:
         """
         Sorts a queryset of clients based on the given sort option.
 
@@ -110,7 +110,7 @@ class ClientQuerySet(models.QuerySet):
 
         return self.order_by("-created_at")
 
-    def active(self) -> "ClientQuerySet":
+    def active(self) -> ClientQuerySet:
         """
         Filters the query to return only active objects.
 
@@ -120,7 +120,7 @@ class ClientQuerySet(models.QuerySet):
         """
         return self.filter(is_active=True)
 
-    def vip(self) -> "ClientQuerySet":
+    def vip(self) -> ClientQuerySet:
         """
         Filters and returns only VIP clients from the queryset.
 
@@ -129,7 +129,7 @@ class ClientQuerySet(models.QuerySet):
         """
         return self.filter(is_vip=True)
 
-    def regular(self) -> "ClientQuerySet":
+    def regular(self) -> ClientQuerySet:
         """
         Filters and returns a queryset containing only regular (non-VIP) clients.
 
@@ -142,7 +142,7 @@ class ClientQuerySet(models.QuerySet):
         """
         return self.filter(is_vip=False)
 
-    def with_orders(self) -> "ClientQuerySet":
+    def with_orders(self) -> ClientQuerySet:
         """
         Filters a queryset to include only the objects that have one or more associated
         orders. This method acts as a helper to refine the dataset by applying a
@@ -154,7 +154,7 @@ class ClientQuerySet(models.QuerySet):
         """
         return self.filter(orders_count__gt=0)
 
-    def without_orders(self) -> "ClientQuerySet":
+    def without_orders(self) -> ClientQuerySet:
         """
         Filters the queryset to include only clients who have no orders.
 
@@ -163,7 +163,7 @@ class ClientQuerySet(models.QuerySet):
         """
         return self.filter(orders_count=0)
 
-    def top_buyers(self, limit: int = 10) -> "ClientQuerySet":
+    def top_buyers(self, limit: int = 10) -> ClientQuerySet:
         """
         Fetches the top buyers based on their total spending, ordered in descending order.
 
@@ -177,13 +177,14 @@ class ClientQuerySet(models.QuerySet):
         """
         return self.filter(total_spent__gt=0).order_by("-total_spent")[:limit]
 
-    def recent(self, days: int = 30) -> "ClientQuerySet":
+    def recent(self, days: int = 30) -> ClientQuerySet:
         """
-        Filter and return a queryset of objects created within the specified number of days from the current date. This method
-        relies on the `created_at` field to perform the filtering. If no value is provided for the number of days, it defaults
-        to 30.
+        Filter and return a queryset of objects created within the specified number of days from
+        the current date. This method relies on the `created_at` field to perform the filtering.
+        If no value is provided for the number of days, it defaults to 30.
 
-        :param days: The number of days to look back from the current date to include objects in the queryset.
+        :param days: The number of days to look back from the current date to include objects
+                        in the queryset.
         :type days: int
         :return: A queryset of objects created within the specified number of days.
         :rtype: ClientQuerySet
@@ -193,7 +194,7 @@ class ClientQuerySet(models.QuerySet):
 
     def by_spending_range(
         self, min_amount: float | int | None = None, max_amount: float | int | None = None
-    ) -> "ClientQuerySet":
+    ) -> ClientQuerySet:
         """
         Filters the queryset based on a specified spending range. Allows filtering clients whose
         total spending is greater than or equal to a minimum amount and/or less than or equal to
@@ -218,9 +219,10 @@ class ClientQuerySet(models.QuerySet):
 
         return queryset
 
-    def with_email(self) -> "ClientQuerySet":
+    def with_email(self) -> ClientQuerySet:
         """
-        Filters the queryset to include only instances that have a non-null and non-empty email field.
+        Filters the queryset to include only instances that have a non-null and
+        non-empty email field.
 
         :return: A queryset containing objects with a valid email field.
         :rtype: ClientQuerySet

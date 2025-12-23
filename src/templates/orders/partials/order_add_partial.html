@@ -197,7 +197,6 @@
 </div>
 
 <style>
-    /* Стилі для підказок */
     .suggestion-item {
         padding: 0.75rem 1rem;
         cursor: pointer;
@@ -231,7 +230,6 @@
         border-bottom: none;
     }
 
-    /* Стилі для вибраного товару */
     .order-item-card {
         background: linear-gradient(to bottom right, #fdf2f8, #faf5ff);
         border: 1px solid #fbcfe8;
@@ -245,7 +243,6 @@
         box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.1);
     }
 
-    /* Анімація появи товару */
     @keyframes slideIn {
         from {
             opacity: 0;
@@ -261,7 +258,6 @@
         animation: slideIn 0.3s ease-out;
     }
 
-    /* Анімація для показу/приховання полів доставки */
     @keyframes fadeIn {
         from {
             opacity: 0;
@@ -279,9 +275,6 @@
 </style>
 
 <script>
-    /**
-     * Перемикання відображення полів доставки
-     */
     function toggleDeliveryFields(show) {
         const deliveryFields = document.getElementById('delivery_fields');
         const deliveryDateInput = document.getElementById('new_delivery_date');
@@ -300,12 +293,10 @@
             deliveryFields.classList.add('hidden');
             deliveryFields.classList.remove('delivery-fields-show');
 
-            // Очистити значення
             deliveryDateInput.value = '';
             document.getElementById('new_delivery_time').value = '';
             deliveryAddressInput.value = '';
 
-            // Зняти обов'язковість
             deliveryDateInput.removeAttribute('required');
             deliveryAddressInput.removeAttribute('required');
         }

@@ -1,8 +1,3 @@
-// Client Modals JavaScript for Camellia Flowers CRM
-
-/**
- * Open edit client modal (simplified - no statistics)
- */
 function openEditClientModal(
     clientId,
     firstName,
@@ -17,7 +12,6 @@ function openEditClientModal(
 ) {
     console.log('Opening edit modal for client:', clientId);
 
-    // Fill form fields
     document.getElementById('edit_client_id').value = clientId;
     document.getElementById('edit_first_name').value = firstName;
     document.getElementById('edit_last_name').value = lastName;
@@ -27,30 +21,20 @@ function openEditClientModal(
     document.getElementById('edit_city').value = city || '';
     document.getElementById('edit_notes').value = notes || '';
 
-    // Set client type (VIP or regular)
     document.getElementById('edit_client_type').value = isVip ? 'vip' : 'regular';
 
-    // Set active status
     document.getElementById('edit_is_active').checked = isActive;
 
-    // Show modal
     document.getElementById('editClientModal').classList.remove('hidden');
 
-    // Prevent body scroll
     document.body.style.overflow = 'hidden';
 }
 
-/**
- * Close edit client modal
- */
 function closeEditClientModal() {
     document.getElementById('editClientModal').classList.add('hidden');
     document.body.style.overflow = 'auto';
 }
 
-/**
- * Handle edit client form submission
- */
 document.getElementById('editClientForm')?.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -59,12 +43,10 @@ document.getElementById('editClientForm')?.addEventListener('submit', function (
 
     console.log('Submitting edit form for client:', clientId);
 
-    // Convert client type to is_vip boolean
     const clientType = formData.get('client_type');
     formData.set('is_vip', clientType === 'vip' ? 'on' : '');
     formData.delete('client_type');
 
-    // Important: The URL must match your Django URL pattern
     fetch(`/clients/${clientId}/edit/`, {
         method: 'POST',
         body: formData,
@@ -91,9 +73,6 @@ document.getElementById('editClientForm')?.addEventListener('submit', function (
         });
 });
 
-/**
- * Open delete client confirmation modal
- */
 function confirmDeleteClient(clientId, clientName, clientPhone) {
     console.log('Opening delete modal for client:', clientId);
 
@@ -122,9 +101,6 @@ function confirmDeleteClient(clientId, clientName, clientPhone) {
     document.body.style.overflow = 'hidden';
 }
 
-/**
- * Close delete client modal
- */
 function closeDeleteClientModal() {
     const deleteModal = document.getElementById('deleteClientModal');
     if (deleteModal) {
@@ -133,9 +109,6 @@ function closeDeleteClientModal() {
     }
 }
 
-/**
- * Handle delete client form submission
- */
 document.getElementById('deleteClientForm')?.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -144,7 +117,6 @@ document.getElementById('deleteClientForm')?.addEventListener('submit', function
 
     console.log('Submitting delete form for client:', clientId);
 
-    // Important: The URL must match your Django URL pattern
     fetch(`/clients/${clientId}/delete/`, {
         method: 'POST',
         body: formData,
@@ -170,7 +142,6 @@ document.getElementById('deleteClientForm')?.addEventListener('submit', function
         });
 });
 
-// Close modals on Escape key
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         closeEditClientModal();
@@ -178,7 +149,6 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
-// Close modals on backdrop click
 document.getElementById('editClientModal')?.addEventListener('click', function (e) {
     if (e.target === this) {
         closeEditClientModal();
@@ -190,6 +160,3 @@ document.getElementById('deleteClientModal')?.addEventListener('click', function
         closeDeleteClientModal();
     }
 });
-
-// Debug: Log when script loads
-console.log('Client modals script loaded successfully');

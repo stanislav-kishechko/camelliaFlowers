@@ -11,7 +11,9 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", cast=bool, default=True)
 
-ALLOWED_HOSTS = ["*"]
+RENDER_DOMAIN = config("RENDER_DOMAIN")
+
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", RENDER_DOMAIN]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -72,6 +74,10 @@ DATABASES = {
         "PORT": config("DB_PORT"),
     }
 }
+
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -7,198 +7,200 @@
 
 {% block content %}
   <div class="p-4 md:p-8">
-  <!-- Breadcrumb -->
-  <nav class="mb-6">
-    <ol class="flex items-center space-x-2 text-sm text-gray-600">
-      <li><a href="{% url 'products:products' %}" class="hover:text-pink-600">Продукти</a></li>
-      <li><span class="text-gray-400">/</span></li>
-      <li class="text-gray-800 font-medium truncate max-w-xs">{{ product.name }}</li>
-    </ol>
-  </nav>
+    <!-- Breadcrumb -->
+    <nav class="mb-6">
+      <ol class="flex items-center space-x-2 text-sm text-gray-600">
+        <li><a href="{% url 'products:products' %}" class="hover:text-pink-600">Продукти</a></li>
+        <li><span class="text-gray-400">/</span></li>
+        <li class="text-gray-800 font-medium truncate max-w-xs">{{ product.name }}</li>
+      </ol>
+    </nav>
 
-  <!-- Main Content -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-6">
-    <!-- Product Image -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div
-          class="aspect-square bg-gradient-to-br {{ product.gradient_color|default:'from-pink-100 to-rose-100' }} flex items-center justify-center relative p-8">
-        {% if product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.name }}"
-               class="w-full h-full object-cover rounded-xl">
-        {% else %}
-          <span class="text-9xl">{{ product.emoji|default:"🌹" }}</span>
-        {% endif %}
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-6">
+      <!-- Product Image -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div
+            class="aspect-square bg-gradient-to-br {{ product.gradient_color|default:'from-pink-100 to-rose-100' }} flex items-center justify-center relative p-8">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                 class="w-full h-full object-cover rounded-xl">
+          {% else %}
+            <span class="text-9xl">{{ product.emoji|default:"🌹" }}</span>
+          {% endif %}
 
-        <!-- Status Badge -->
-        <span
-            class="absolute top-4 right-4 px-4 py-2 {% if product.stock > 10 %}bg-green-500{% elif product.stock > 0 %}bg-yellow-500{% else %}bg-gray-500{% endif %} text-white rounded-full text-sm font-medium shadow-lg">
+          <!-- Status Badge -->
+          <span
+              class="absolute top-4 right-4 px-4 py-2 {% if product.stock > 10 %}bg-green-500{% elif product.stock > 0 %}bg-yellow-500{% else %}bg-gray-500{% endif %} text-white rounded-full text-sm font-medium shadow-lg">
             {% if product.stock > 10 %}✅ В наявності{% elif product.stock > 0 %}⚠️
               Закінчується{% else %}❌ Немає{% endif %}
           </span>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="p-6 grid grid-cols-3 gap-4 border-t border-gray-100">
+          <div class="text-center">
+            <p class="text-2xl font-bold text-pink-600">{{ product.sold|default:"0" }}</p>
+            <p class="text-xs text-gray-500 mt-1">Продано</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-gray-800">{{ product.stock }}</p>
+            <p class="text-xs text-gray-500 mt-1">На складі</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-yellow-500">{% if product.rating %}⭐
+              {{ product.rating }}{% else %}—{% endif %}</p>
+            <p class="text-xs text-gray-500 mt-1">Рейтинг</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="p-6 grid grid-cols-3 gap-4 border-t border-gray-100">
-        <div class="text-center">
-          <p class="text-2xl font-bold text-pink-600">{{ product.sold|default:"0" }}</p>
-          <p class="text-xs text-gray-500 mt-1">Продано</p>
-        </div>
-        <div class="text-center">
-          <p class="text-2xl font-bold text-gray-800">{{ product.stock }}</p>
-          <p class="text-xs text-gray-500 mt-1">На складі</p>
-        </div>
-        <div class="text-center">
-          <p class="text-2xl font-bold text-yellow-500">{% if product.rating %}⭐
-            {{ product.rating }}{% else %}—{% endif %}</p>
-          <p class="text-xs text-gray-500 mt-1">Рейтинг</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Product Info -->
-    <div class="space-y-6">
-      <!-- Header -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-start justify-between mb-4">
-          <div class="flex-1">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ product.name }}</h1>
-            <div class="flex items-center space-x-3">
+      <!-- Product Info -->
+      <div class="space-y-6">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+              <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{{ product.name }}</h1>
+              <div class="flex items-center space-x-3">
                 <span class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium">
                   {{ product.category.emoji }} {{ product.category.name }}
                 </span>
-              {% if product.sku %}
-                <span class="text-sm text-gray-500">SKU: {{ product.sku }}</span>
-              {% endif %}
+                {% if product.sku %}
+                  <span class="text-sm text-gray-500">SKU: {{ product.sku }}</span>
+                {% endif %}
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Price -->
-        <div class="mb-6">
-          <p class="text-sm text-gray-500 mb-1">Ціна</p>
-          <p class="text-4xl md:text-5xl font-bold text-pink-600">₴{{ product.price }}</p>
-        </div>
-
-        <!-- Description -->
-        {% if product.description %}
+          <!-- Price -->
           <div class="mb-6">
-            <p class="text-sm font-medium text-gray-700 mb-2">Опис</p>
-            <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+            <p class="text-sm text-gray-500 mb-1">Ціна</p>
+            <p class="text-4xl md:text-5xl font-bold text-pink-600">₴{{ product.price }}</p>
           </div>
-        {% endif %}
 
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-          <button
-              onclick="openEditProductModal({{ product.id }}, '{{ product.name|escapejs }}', '{{ product.description|escapejs }}', '{{ product.category.id }}', {{ product.price }}, {{ product.stock }}, {{ product.is_active|yesno:'true,false' }}, {% if product.image %}'{{ product.image.url }}', '{{ product.image.name }}'{% else %}null, null{% endif %})"
-              class="flex-1 px-6 py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition flex items-center justify-center space-x-2">
-            <span>✏️</span>
-            <span>Редагувати</span>
-          </button>
-          <button onclick="confirmDelete({{ product.id }}, '{{ product.name|escapejs }}')"
-                  class="px-6 py-3 border border-red-300 text-red-600 hover:bg-red-50 rounded-lg font-medium transition flex items-center justify-center space-x-2">
-            <span>🗑️</span>
-            <span>Видалити</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Additional Info Cards -->
-      <div class="grid grid-cols-2 gap-4">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <div class="flex items-center space-x-3">
-            <div
-                class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span class="text-2xl">📦</span>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Залишок</p>
-              <p class="text-xl font-bold {% if product.stock > 10 %}text-gray-800{% elif product.stock > 0 %}text-yellow-600{% else %}text-red-600{% endif %}">
-                {{ product.stock }} шт
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <div class="flex items-center space-x-3">
-            <div
-                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span class="text-2xl">📈</span>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Продажі</p>
-              <p class="text-xl font-bold text-gray-800">{{ product.sold|default:"0" }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Metadata -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 class="font-semibold text-gray-800 mb-4">Додаткова інформація</h3>
-        <div class="space-y-3 text-sm">
-          <div class="flex justify-between">
-            <span class="text-gray-500">Дата створення:</span>
-            <span class="font-medium text-gray-800">{{ product.created_at|date:"d.m.Y H:i" }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">Остання зміна:</span>
-            <span class="font-medium text-gray-800">{{ product.updated_at|date:"d.m.Y H:i" }}</span>
-          </div>
-          {% if product.sku %}
-            <div class="flex justify-between">
-              <span class="text-gray-500">Артикул (SKU):</span>
-              <span class="font-medium text-gray-800">{{ product.sku }}</span>
+          <!-- Description -->
+          {% if product.description %}
+            <div class="mb-6">
+              <p class="text-sm font-medium text-gray-700 mb-2">Опис</p>
+              <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
             </div>
           {% endif %}
-          <div class="flex justify-between">
-            <span class="text-gray-500">Статус:</span>
-            <span
-                class="font-medium {% if product.is_active %}text-green-600{% else %}text-red-600{% endif %}">
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+            <button
+                onclick="openEditProductModal({{ product.id }}, '{{ product.name|escapejs }}', '{{ product.description|escapejs }}', '{{ product.category.id }}', {{ product.price }}, {{ product.stock }}, {{ product.is_active|yesno:'true,false' }}, {% if product.image %}'{{ product.image.url }}', '{{ product.image.name }}'{% else %}null, null{% endif %})"
+                class="flex-1 px-6 py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition flex items-center justify-center space-x-2">
+              <span>✏️</span>
+              <span>Редагувати</span>
+            </button>
+            <button onclick="confirmDelete({{ product.id }}, '{{ product.name|escapejs }}')"
+                    class="px-6 py-3 border border-red-300 text-red-600 hover:bg-red-50 rounded-lg font-medium transition flex items-center justify-center space-x-2">
+              <span>🗑️</span>
+              <span>Видалити</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Additional Info Cards -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center space-x-3">
+              <div
+                  class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span class="text-2xl">📦</span>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Залишок</p>
+                <p class="text-xl font-bold {% if product.stock > 10 %}text-gray-800{% elif product.stock > 0 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                  {{ product.stock }} шт
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center space-x-3">
+              <div
+                  class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span class="text-2xl">📈</span>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Продажі</p>
+                <p class="text-xl font-bold text-gray-800">{{ product.sold|default:"0" }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 class="font-semibold text-gray-800 mb-4">Додаткова інформація</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-500">Дата створення:</span>
+              <span
+                  class="font-medium text-gray-800">{{ product.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Остання зміна:</span>
+              <span
+                  class="font-medium text-gray-800">{{ product.updated_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            {% if product.sku %}
+              <div class="flex justify-between">
+                <span class="text-gray-500">Артикул (SKU):</span>
+                <span class="font-medium text-gray-800">{{ product.sku }}</span>
+              </div>
+            {% endif %}
+            <div class="flex justify-between">
+              <span class="text-gray-500">Статус:</span>
+              <span
+                  class="font-medium {% if product.is_active %}text-green-600{% else %}text-red-600{% endif %}">
                 {% if product.is_active %}Активний{% else %}Неактивний{% endif %}
               </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Sales History (Optional) -->
-  <!-- Sales History (Optional) -->
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold text-gray-800">Історія продажів</h2>
-      <span class="text-sm text-gray-500">Останні 10 замовлень</span>
-    </div>
+    <!-- Sales History (Optional) -->
+    <!-- Sales History (Optional) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-800">Історія продажів</h2>
+        <span class="text-sm text-gray-500">Останні 10 замовлень</span>
+      </div>
 
-    {% if order_items %}
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead>
-          <tr class="border-b text-gray-500">
-            <th class="py-2 text-left">Замовлення</th>
-            <th class="py-2 text-left">Клієнт</th>
-            <th class="py-2 text-left">Дата</th>
-            <th class="py-2 text-left">Статус</th>
-            <th class="py-2 text-right">К-сть</th>
-            <th class="py-2 text-right">Ціна</th>
-            <th class="py-2 text-right">Сума</th>
-          </tr>
-          </thead>
-          <tbody class="divide-y">
-          {% for item in order_items|slice:":10" %}
-            <tr class="hover:bg-gray-50 transition">
-              <td class="py-3 font-medium text-pink-600">
-                <a href="{% url 'orders:order_detail' item.order.id %}">
-                  #{{ item.order.id }}
-                </a>
-              </td>
-              <td class="py-3">{{ item.order.client }}</td>
-              <td class="py-3 text-gray-500">
-                {{ item.order.created_at|date:"d.m.Y H:i" }}
-              </td>
-              <td class="py-3">
+      {% if order_items %}
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+            <tr class="border-b text-gray-500">
+              <th class="py-2 text-left">Замовлення</th>
+              <th class="py-2 text-left">Клієнт</th>
+              <th class="py-2 text-left">Дата</th>
+              <th class="py-2 text-left">Статус</th>
+              <th class="py-2 text-right">К-сть</th>
+              <th class="py-2 text-right">Ціна</th>
+              <th class="py-2 text-right">Сума</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y">
+            {% for item in order_items|slice:":10" %}
+              <tr class="hover:bg-gray-50 transition">
+                <td class="py-3 font-medium text-pink-600">
+                  <a href="{% url 'orders:order_detail' item.order.id %}">
+                    #{{ item.order.id }}
+                  </a>
+                </td>
+                <td class="py-3">{{ item.order.client }}</td>
+                <td class="py-3 text-gray-500">
+                  {{ item.order.created_at|date:"d.m.Y H:i" }}
+                </td>
+                <td class="py-3">
               <span class="px-3 py-1 rounded-full text-xs font-medium
                 {% if item.order.status == 'COMPLETED' %}bg-green-100 text-green-700
                 {% elif item.order.status == 'PROCESSING' %}bg-blue-100 text-blue-700
@@ -208,32 +210,31 @@
               ">
                 {{ item.order.get_status_display }}
               </span>
-              </td>
-              <td class="py-3 text-right font-medium">{{ item.quantity }}</td>
-              <td class="py-3 text-right">{{ item.unit_price }} ₴</td>
-              <td class="py-3 text-right font-semibold">{{ item.subtotal }} ₴</td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+                </td>
+                <td class="py-3 text-right font-medium">{{ item.quantity }}</td>
+                <td class="py-3 text-right">{{ item.unit_price }} ₴</td>
+                <td class="py-3 text-right font-semibold">{{ item.subtotal }} ₴</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
 
-      {% if orders_count > 10 %}
-        <p class="text-sm text-gray-500 mt-4 text-right">
-          Показано 10 з {{ orders_count }} замовлень
-        </p>
+        {% if orders_count > 10 %}
+          <p class="text-sm text-gray-500 mt-4 text-right">
+            Показано 10 з {{ orders_count }} замовлень
+          </p>
+        {% endif %}
+
+      {% else %}
+        <div class="text-center py-12 text-gray-500">
+          <span class="text-5xl mb-4 block">📦</span>
+          <p>Цей товар ще не продавали</p>
+        </div>
       {% endif %}
-
-    {% else %}
-      <div class="text-center py-12 text-gray-500">
-        <span class="text-5xl mb-4 block">📦</span>
-        <p>Цей товар ще не продавали</p>
-      </div>
-    {% endif %}
+    </div>
   </div>
 
-
-  <!-- Include Modal Components -->
   {% include 'products/partial/product_edit_partial.html' %}
   {% include 'products/partial/product_delete_partial.html' %}
 {% endblock %}

@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Any, Dict
+from typing import Any
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -56,7 +56,7 @@ class ClientListView(LoginRequiredMixin, ListView):
 
         return queryset
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Add statistics and filter/sort values to context.
 
         Args:
@@ -65,9 +65,9 @@ class ClientListView(LoginRequiredMixin, ListView):
         Returns:
             dict: The updated template context.
         """
-        context: Dict[str, Any] = super().get_context_data(**kwargs)
+        context: dict[str, Any] = super().get_context_data(**kwargs)
 
-        stats: Dict[str, Any] = Client.objects.get_statistics()
+        stats: dict[str, Any] = Client.objects.get_statistics()
         context.update(stats)
 
         context["search_query"] = self.request.GET.get("search", "")
@@ -85,7 +85,7 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "client"
     paginate_by = 2
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Provide client details with a paginated list of orders and stats.
 
         Args:
@@ -94,7 +94,7 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
         Returns:
             dict: The context including paginated orders and simple stats.
         """
-        context: Dict[str, Any] = super().get_context_data(**kwargs)
+        context: dict[str, Any] = super().get_context_data(**kwargs)
 
         client: Client = self.get_object()  # type: ignore[assignment]
 

@@ -108,7 +108,8 @@ class OrderItemForm(forms.ModelForm):
     frontend presentation and implements dynamic label customization for the product
     field if the `Product` model contains an `emoji` field.
 
-    :ivar product: The product to be ordered, filtered to display only those with stock greater than zero.
+    :ivar product: The product to be ordered, filtered to display only those with stock
+                    greater than zero.
     :ivar quantity: The quantity of the product to be ordered, with a minimum of 1.
     """
     class Meta:

@@ -5,4 +5,4 @@ class ProductsConfig(AppConfig):
     name = "apps.products"
 
     def ready(self):
-        from apps.products import signals
+        pass

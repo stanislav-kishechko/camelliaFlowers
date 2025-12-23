@@ -1,16 +1,8 @@
-/* Camellia Flowers CRM - Main Styles */
-
-/* Google Fonts - Inter */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Base Styles */
 body {
     font-family: 'Inter', sans-serif;
 }
-
-/* ==========================================
-   SIDEBAR STYLES
-   ========================================== */
 
 .sidebar {
     transition: width 0.3s ease, transform 0.3s ease;
@@ -41,7 +33,6 @@ body {
     transform: rotate(180deg);
 }
 
-/* Navigation Links */
 .nav-link {
     position: relative;
     transition: all 0.2s ease;
@@ -56,12 +47,10 @@ body {
     box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
 }
 
-/* Main Content Area */
 .main-content {
     transition: margin-left 0.3s ease;
 }
 
-/* Mobile Sidebar */
 @media (max-width: 1024px) {
     .sidebar {
         transform: translateX(-100%);
@@ -72,17 +61,12 @@ body {
     }
 }
 
-/* Desktop Collapsed State */
 @media (min-width: 1024px) {
     .sidebar.collapsed ~ .main-content,
     .sidebar.collapsed ~ #main-content {
         margin-left: 80px !important;
     }
 }
-
-/* ==========================================
-   KANBAN & DRAG-DROP
-   ========================================== */
 
 .kanban-column {
     min-height: 500px;
@@ -113,10 +97,6 @@ body {
     background-color: #fce7f3;
 }
 
-/* ==========================================
-   SCROLLBAR
-   ========================================== */
-
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -136,10 +116,6 @@ body {
     background: #db2777;
 }
 
-/* ==========================================
-   MODALS & ANIMATIONS
-   ========================================== */
-
 .modal-enter {
     animation: modalFadeIn 0.3s ease-out;
 }
@@ -154,10 +130,6 @@ body {
         transform: scale(1);
     }
 }
-
-/* ==========================================
-   LOADING & SPINNERS
-   ========================================== */
 
 .spinner {
     border: 3px solid rgba(236, 72, 153, 0.3);
@@ -205,10 +177,6 @@ body {
     }
 }
 
-/* ==========================================
-   TOAST NOTIFICATIONS
-   ========================================== */
-
 .toast {
     position: fixed;
     top: 20px;
@@ -228,10 +196,6 @@ body {
     }
 }
 
-/* ==========================================
-   CARDS & HOVER EFFECTS
-   ========================================== */
-
 .card-hover {
     transition: all 0.3s ease;
 }
@@ -240,10 +204,6 @@ body {
     transform: translateY(-4px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
-
-/* ==========================================
-   BADGES & STATUS
-   ========================================== */
 
 .badge {
     display: inline-flex;
@@ -323,10 +283,6 @@ body {
     line-height: 1;
 }
 
-/* ==========================================
-   FORMS & INPUTS
-   ========================================== */
-
 input:focus,
 select:focus,
 textarea:focus {
@@ -352,10 +308,6 @@ select {
     transform: translateX(20px);
 }
 
-/* ==========================================
-   BUTTONS
-   ========================================== */
-
 button {
     transition: all 0.2s ease;
 }
@@ -363,10 +315,6 @@ button {
 button:active {
     transform: scale(0.98);
 }
-
-/* ==========================================
-   GRADIENTS
-   ========================================== */
 
 .gradient-pink {
     background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
@@ -384,10 +332,6 @@ button:active {
     background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
 }
 
-/* ==========================================
-   CHARTS
-   ========================================== */
-
 .chart-container {
     position: relative;
     height: 300px;
@@ -399,10 +343,6 @@ button:active {
         height: 400px;
     }
 }
-
-/* ==========================================
-   PROGRESS BAR
-   ========================================== */
 
 .progress-bar {
     height: 8px;
@@ -416,10 +356,6 @@ button:active {
     background: linear-gradient(90deg, #ec4899, #db2777);
     transition: width 0.3s ease;
 }
-
-/* ==========================================
-   UTILITY CLASSES
-   ========================================== */
 
 .text-truncate {
     overflow: hidden;
@@ -448,10 +384,6 @@ button:active {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* ==========================================
-   EMPTY STATE
-   ========================================== */
-
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
@@ -462,10 +394,6 @@ button:active {
     opacity: 0.3;
     margin-bottom: 1rem;
 }
-
-/* ==========================================
-   TOOLTIPS
-   ========================================== */
 
 .tooltip {
     position: relative;
@@ -487,10 +415,6 @@ button:active {
     margin-bottom: 0.5rem;
 }
 
-/* ==========================================
-   RESPONSIVE TABLES
-   ========================================== */
-
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -506,10 +430,6 @@ button:active {
     }
 }
 
-/* ==========================================
-   PRINT STYLES
-   ========================================== */
-
 @media print {
     .sidebar,
     .no-print {
@@ -524,10 +444,6 @@ button:active {
         background: white;
     }
 }
-
-/* ==========================================
-   ACCESSIBILITY
-   ========================================== */
 
 .sr-only {
     position: absolute;
@@ -546,9 +462,6 @@ button:active {
     outline-offset: 2px;
 }
 
-/* Enhanced Search and Filters Styling */
-
-/* Search Input */
 #searchInput {
     transition: all 0.2s ease;
 }
@@ -557,7 +470,6 @@ button:active {
     box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
 }
 
-/* Custom Select Styling */
 select {
     background-image: none;
     cursor: pointer;
@@ -567,7 +479,6 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
 }
 
-/* Active Filter Badges */
 .filter-badge {
     animation: fadeIn 0.2s ease-in;
 }
@@ -583,7 +494,6 @@ select:focus {
     }
 }
 
-/* Loading Indicator Animation */
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
@@ -597,7 +507,6 @@ select:focus {
     animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Smooth transitions for grid */
 #clientsGrid {
     transition: opacity 0.3s ease;
 }
@@ -607,7 +516,6 @@ select:focus {
     pointer-events: none;
 }
 
-/* Clear button hover effect */
 button[onclick*="clear"] {
     transition: all 0.2s ease;
 }
@@ -616,7 +524,6 @@ button[onclick*="clear"]:hover {
     transform: translateY(-1px);
 }
 
-/* Mobile responsive adjustments */
 @media (max-width: 768px) {
     .filter-container {
         flex-direction: column;
@@ -625,30 +532,4 @@ button[onclick*="clear"]:hover {
     select {
         width: 100%;
     }
-}
-
-/* ==========================================
-   DARK MODE (Optional)
-   ========================================== */
-
-@media (prefers-color-scheme: dark) {
-    /* Uncomment to enable dark mode
-    body {
-        background-color: #1f2937;
-        color: #f3f4f6;
-    }
-
-    .bg-white {
-        background-color: #374151 !important;
-    }
-
-    .text-gray-800 {
-        color: #f3f4f6 !important;
-    }
-
-    .sidebar {
-        background: #1f2937;
-        border-color: #374151;
-    }
-    */
 }

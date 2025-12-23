@@ -247,7 +247,6 @@
   {% include 'orders/partials/order_add_partial.html' %}
   {% include 'orders/partials/order_delete_partial.html' %}
 
-  <!-- JSON Data for JavaScript -->
   <script id="products-data" type="application/json">{{ products_json|safe }}</script>
   <script id="clients-data" type="application/json">{{ clients_json|safe }}</script>
 
@@ -256,7 +255,6 @@
 {% block extra_js %}
   <script src="{% static 'js/order_modals.js' %}"></script>
   <script>
-      // View Switcher
       function switchView(view) {
           const kanbanView = document.getElementById('orders-kanban');
           const tableView = document.getElementById('orders-table');
@@ -282,7 +280,6 @@
           localStorage.setItem('ordersView', view);
       }
 
-      // Restore view preference
       document.addEventListener('DOMContentLoaded', function () {
           const savedView = localStorage.getItem('ordersView');
           if (savedView) {
@@ -290,7 +287,6 @@
           }
       });
 
-      // Filters functionality
       const searchInput = document.getElementById('searchInput');
       const statusFilter = document.getElementById('statusFilter');
       const dateRangeFilter = document.getElementById('dateRangeFilter');

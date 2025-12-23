@@ -343,7 +343,6 @@
 
 {% block extra_js %}
   <script>
-      // New Product Modal Functions
       function openNewProductModal() {
           document.getElementById('newProductModal').classList.remove('hidden');
       }
@@ -352,7 +351,6 @@
           document.getElementById('newProductModal').classList.add('hidden');
       }
 
-      // Search on input with debounce
       let searchTimeout;
       const searchInput = document.querySelector('input[name="search"]');
       if (searchInput) {
@@ -364,7 +362,6 @@
           });
       }
   </script>
-
-  <!-- Include shared product modal functions -->
+  
   <script src="{% static 'js/product_modals.js' %}"></script>
 {% endblock %}

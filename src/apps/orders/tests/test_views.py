@@ -1,7 +1,7 @@
 """Тести для класичних Views додатку orders."""
 import pytest
-from django.urls import reverse
 from django.contrib.messages import get_messages
+from django.urls import reverse
 
 from apps.orders.enums import OrderStatusEnum
 

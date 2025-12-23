@@ -258,21 +258,18 @@
 {% block extra_js %}
 <script src="{% static 'js/client_modals.js' %}"></script>
 <script>
-    // Auto-submit form when filters change
     function autoSubmitForm() {
         document.getElementById('clientSearchForm').submit();
     }
 
-    // Debounce search input
     let searchTimeout;
     function debounceSearch() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             autoSubmitForm();
-        }, 500); // Wait 500ms after user stops typing
+        }, 500);
     }
 
-    // Clear all filters
     function clearFilters() {
         document.getElementById('searchInput').value = '';
         document.getElementById('typeFilter').value = 'all';
@@ -280,19 +277,16 @@
         autoSubmitForm();
     }
 
-    // Clear search only
     function clearSearch() {
         document.getElementById('searchInput').value = '';
         autoSubmitForm();
     }
 
-    // Clear type filter only
     function clearType() {
         document.getElementById('typeFilter').value = 'all';
         autoSubmitForm();
     }
 
-    // Show loading indicator
     document.getElementById('clientSearchForm').addEventListener('submit', function() {
         document.getElementById('loadingIndicator').classList.remove('hidden');
     });

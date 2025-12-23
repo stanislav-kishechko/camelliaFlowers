@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import Any, Dict, Optional
+from typing import Any
 
 from django.db import models
 from django.db.models import QuerySet, Sum
@@ -36,7 +36,7 @@ class ClientManager(models.Manager):
         """
         return ClientQuerySet(self.model, using=self._db)
 
-    def search(self, query: str) -> QuerySet["Client"]:
+    def search(self, query: str) -> QuerySet[Client]:
         """
         Searches for clients using the given query and returns a filtered query
         set based on the search terms. This method is designed to operate on
@@ -50,7 +50,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().search(query)
 
-    def by_type(self, client_type: str) -> QuerySet["Client"]:
+    def by_type(self, client_type: str) -> QuerySet[Client]:
         """
         Retrieve all Client objects filtered by their type.
 
@@ -66,7 +66,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().by_type(client_type)
 
-    def sort_by(self, sort_option: str) -> QuerySet["Client"]:
+    def sort_by(self, sort_option: str) -> QuerySet[Client]:
         """
         Sorts the queryset of clients based on the provided sorting option.
 
@@ -81,7 +81,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().sort_by(sort_option)
 
-    def active(self) -> QuerySet["Client"]:
+    def active(self) -> QuerySet[Client]:
         """
         Retrieves the active objects from the queryset.
 
@@ -90,7 +90,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().active()
 
-    def vip(self) -> QuerySet["Client"]:
+    def vip(self) -> QuerySet[Client]:
         """
         Retrieve a QuerySet containing clients marked as VIP.
 
@@ -99,7 +99,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().vip()
 
-    def regular(self) -> QuerySet["Client"]:
+    def regular(self) -> QuerySet[Client]:
         """
         Retrieves a queryset containing regular clients.
 
@@ -112,7 +112,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().regular()
 
-    def with_orders(self) -> QuerySet["Client"]:
+    def with_orders(self) -> QuerySet[Client]:
         """
         Returns a QuerySet containing Clients with related orders.
 
@@ -126,7 +126,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().with_orders()
 
-    def without_orders(self) -> QuerySet["Client"]:
+    def without_orders(self) -> QuerySet[Client]:
         """
         Filters and retrieves a queryset of all clients who have not placed any orders.
 
@@ -135,7 +135,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().without_orders()
 
-    def top_buyers(self, limit: int = 10) -> QuerySet["Client"]:
+    def top_buyers(self, limit: int = 10) -> QuerySet[Client]:
         """
         Returns the top buyers from the client queryset based on the given limit.
 
@@ -150,7 +150,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().top_buyers(limit)
 
-    def recent(self, days: int = 30) -> QuerySet["Client"]:
+    def recent(self, days: int = 30) -> QuerySet[Client]:
         """
         Retrieve clients added within the specified number of days.
 
@@ -166,7 +166,7 @@ class ClientManager(models.Manager):
 
     def by_spending_range(
         self, min_amount: float | int | None = None, max_amount: float | int | None = None
-    ) -> QuerySet["Client"]:
+    ) -> QuerySet[Client]:
         """
         Filter clients based on their spending range. This method allows you to query clients
         whose spending falls within a specified minimum and/or maximum amount. If no range is
@@ -181,7 +181,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().by_spending_range(min_amount, max_amount)
 
-    def with_email(self) -> QuerySet["Client"]:
+    def with_email(self) -> QuerySet[Client]:
         """
         Filters the queryset to include only clients with a specified email associated
         with them. This should be used in cases where email filtering is explicitly
@@ -192,7 +192,7 @@ class ClientManager(models.Manager):
         """
         return self.get_queryset().with_email()
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Compute basic statistics for clients collection.
 
         Returns:

@@ -1,14 +1,9 @@
-// ============================================
-// NEW PRODUCT MODAL FUNCTIONS
-// ============================================
-
 function openNewProductModal() {
     document.getElementById('newProductModal').classList.remove('hidden');
 }
 
 function closeNewProductModal() {
     document.getElementById('newProductModal').classList.add('hidden');
-    // Reset form
     document.querySelector('#newProductModal form').reset();
     clearNewProductImage();
 }
@@ -22,14 +17,12 @@ function previewNewProductImage(input) {
         const reader = new FileReader();
         const file = input.files[0];
 
-        // Validate file size (5MB max)
         if (file.size > 5 * 1024 * 1024) {
             alert('Файл занадто великий! Максимальний розмір: 5MB');
             input.value = '';
             return;
         }
 
-        // Validate file type
         if (!file.type.match('image.*')) {
             alert('Будь ласка, оберіть файл зображення');
             input.value = '';
@@ -58,18 +51,12 @@ function clearNewProductImage() {
     preview.classList.add('hidden');
 }
 
-// ============================================
-// EDIT PRODUCT MODAL FUNCTIONS
-// ============================================
-
 function openEditProductModal(id, name, description, categoryId, price, stock, isActive, imageUrl, imageName) {
     const modal = document.getElementById('editProductModal');
     const form = document.getElementById('editProductForm');
 
-    // Set form action
     form.action = `/products/${id}/update/`;
 
-    // Fill in the form fields
     document.getElementById('edit_product_id').value = id;
     document.getElementById('edit_name').value = name;
     document.getElementById('edit_description').value = description || '';
@@ -78,11 +65,9 @@ function openEditProductModal(id, name, description, categoryId, price, stock, i
     document.getElementById('edit_stock').value = stock;
     document.getElementById('edit_is_active').checked = isActive;
 
-    // Reset image fields
     clearEditImage();
     document.getElementById('remove_image').value = 'false';
 
-    // Handle current image
     const currentImageContainer = document.getElementById('current_image_container');
     const currentImagePreview = document.getElementById('current_image_preview');
     const currentImageName = document.getElementById('current_image_name');
@@ -95,7 +80,6 @@ function openEditProductModal(id, name, description, categoryId, price, stock, i
         currentImageContainer.classList.add('hidden');
     }
 
-    // Show modal
     modal.classList.remove('hidden');
 }
 
@@ -103,7 +87,6 @@ function closeEditProductModal() {
     const modal = document.getElementById('editProductModal');
     modal.classList.add('hidden');
 
-    // Reset form
     const form = document.getElementById('editProductForm');
     form.reset();
     clearEditImage();
@@ -121,14 +104,12 @@ function previewEditImage(input) {
         const reader = new FileReader();
         const file = input.files[0];
 
-        // Validate file size (5MB max)
         if (file.size > 5 * 1024 * 1024) {
             alert('Файл занадто великий! Максимальний розмір: 5MB');
             input.value = '';
             return;
         }
 
-        // Validate file type
         if (!file.type.match('image.*')) {
             alert('Будь ласка, оберіть файл зображення');
             input.value = '';
@@ -139,7 +120,6 @@ function previewEditImage(input) {
             previewImg.src = e.target.result;
             imageName.textContent = file.name;
             preview.classList.remove('hidden');
-            // Hide current image when new one is selected
             currentImageContainer.classList.add('hidden');
         };
 
@@ -159,7 +139,6 @@ function clearEditImage() {
     imageName.textContent = '';
     preview.classList.add('hidden');
 
-    // Show current image again if it exists
     const currentImage = document.getElementById('current_image_preview');
     if (currentImage.src && document.getElementById('remove_image').value !== 'true') {
         currentImageContainer.classList.remove('hidden');
@@ -170,34 +149,24 @@ function removeCurrentImage() {
     const currentImageContainer = document.getElementById('current_image_container');
     const removeImageInput = document.getElementById('remove_image');
 
-    // Hide current image container
     currentImageContainer.classList.add('hidden');
 
-    // Mark image for removal
     removeImageInput.value = 'true';
 
-    // Clear the file input in case user selected new image
     const input = document.getElementById('edit_image_input');
     input.value = '';
     clearEditImage();
 }
-
-// ============================================
-// DELETE PRODUCT MODAL FUNCTIONS
-// ============================================
 
 function confirmDelete(productId, productName) {
     const modal = document.getElementById('deleteProductModal');
     const form = document.getElementById('deleteProductForm');
     const productNameSpan = document.getElementById('delete_product_name');
 
-    // Set form action - matching Django URL pattern
     form.action = `/products/${productId}/delete/`;
 
-    // Set product name
     productNameSpan.textContent = productName;
 
-    // Show modal
     modal.classList.remove('hidden');
 }
 
@@ -205,10 +174,6 @@ function closeDeleteModal() {
     const modal = document.getElementById('deleteProductModal');
     modal.classList.add('hidden');
 }
-
-// ============================================
-// CLOSE MODALS ON OUTSIDE CLICK
-// ============================================
 
 window.onclick = function (event) {
     const newModal = document.getElementById('newProductModal');
@@ -225,10 +190,6 @@ window.onclick = function (event) {
         closeDeleteModal();
     }
 };
-
-// ============================================
-// CLOSE MODALS ON ESC KEY
-// ============================================
 
 document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {

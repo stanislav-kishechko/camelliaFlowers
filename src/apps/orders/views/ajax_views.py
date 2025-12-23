@@ -1,15 +1,15 @@
 import json
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Q
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 from apps.clients.models import Client
-from apps.products.models import Product
 from apps.orders.models import Order, OrderItem
+from apps.products.models import Product
 
 
 @login_required()
@@ -272,9 +272,9 @@ def create_order_ajax(request):
 def update_order_ajax(request, order_id):
     """
     Updates the details of an order via a POST AJAX request. This function handles the process of
-    updating an existing order with client information, items, delivery details, and other order-related
-    data. If any data validation fails or required fields are missing, appropriate error messages are
-    returned in the response.
+    updating an existing order with client information, items, delivery details, and other
+    order-related data. If any data validation fails or required fields are missing, appropriate
+    error messages are returned in the response.
 
     This function ensures transactional integrity during updates and provides an atomic operation
     for updating orders and their related entities. In case of errors or exceptions, the database
@@ -474,18 +474,18 @@ def update_order_ajax(request, order_id):
 @require_http_methods(["POST"])
 def update_order_status(request, order_id):
     """
-    Updates the status of an existing order and persists any associated notes. This 
-    function ensures that only valid status transitions occur and handles any 
-    errors encountered during the process. It provides appropriate responses 
+    Updates the status of an existing order and persists any associated notes. This
+    function ensures that only valid status transitions occur and handles any
+    errors encountered during the process. It provides appropriate responses
     depending on the success or failure of the operation.
 
-    :param request: The HTTP request object that contains metadata about the request 
+    :param request: The HTTP request object that contains metadata about the request
         and possible JSON data relevant to the order status update.
     :type request: HttpRequest
-    :param order_id: An integer specifying the unique identifier of the order 
+    :param order_id: An integer specifying the unique identifier of the order
         whose status is to be updated.
     :type order_id: int
-    :return: JsonResponse containing success status, updated order data (if applicable), 
+    :return: JsonResponse containing success status, updated order data (if applicable),
         and any error or success messages.
     :rtype: JsonResponse
     """
@@ -542,21 +542,21 @@ def add_order_item(request, order_id):
     Adds an item to an existing order.
 
     This function allows a user to add a product as an item to an order. It verifies
-    the existence of the order and product, handles quantity updates for existing 
-    items, and creates new items if they do not already exist in the order. The 
-    function adjusts the order's total cost accordingly after updating or adding 
-    items. If any validation errors occur, the function returns an appropriate 
+    the existence of the order and product, handles quantity updates for existing
+    items, and creates new items if they do not already exist in the order. The
+    function adjusts the order's total cost accordingly after updating or adding
+    items. If any validation errors occur, the function returns an appropriate
     JSON response with an error message.
 
-    :param request: HTTP request object, containing user and payload data 
+    :param request: HTTP request object, containing user and payload data
         (e.g., product_id, quantity) in its body.
     :type request: HttpRequest
-    :param order_id: Identifier for the targeted order to which the product 
+    :param order_id: Identifier for the targeted order to which the product
         should be added.
     :type order_id: int
-    :return: JSON response containing the success status, updated order details, 
-        or error message. If successful, it includes the updated order's details 
-        and a confirmation message. In cases of failure, it returns the error 
+    :return: JSON response containing the success status, updated order details,
+        or error message. If successful, it includes the updated order's details
+        and a confirmation message. In cases of failure, it returns the error
         type and description.
     :rtype: JsonResponse
     """
@@ -714,7 +714,7 @@ def delete_order_item(request, order_id, item_id):
     :type order_id: int
     :param item_id: ID of the item to be deleted.
     :type item_id: int
-    :return: JsonResponse object indicating the success or failure of the operation, 
+    :return: JsonResponse object indicating the success or failure of the operation
              along with the updated order data if applicable.
     :rtype: JsonResponse
     """
@@ -836,7 +836,7 @@ def calculate_order_price(request):
             "success": False,
             "error": "Продукт не знайдено"
         }, status=404)
-    except (json.JSONDecodeError, KeyError, ValueError) as e:
+    except (json.JSONDecodeError, KeyError, ValueError):
         return JsonResponse({
             "success": False,
             "error": "Невірний формат даних"

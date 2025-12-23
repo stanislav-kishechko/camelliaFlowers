@@ -1,4 +1,5 @@
 import json
+
 import pytest
 from django.urls import reverse
 
@@ -23,7 +24,11 @@ class TestOrdersAjax:
         assert resp.status_code == 200
         assert resp.json()["products"] == []
 
-    def test_create_order_ajax_success_with_existing_client(self, client, user, client_obj, product):
+    def test_create_order_ajax_success_with_existing_client(self,
+                                                            client,
+                                                            user,
+                                                            client_obj,
+                                                            product):
         self._auth(client, user)
         url = reverse("orders_ajax:create_order")
         payload = {
