@@ -1,86 +1,160 @@
-<!-- New Product Modal Component -->
+<!-- New Product Modal Component - Відповідає моделі Product -->
 <div id="newProductModal"
      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-  <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-    <div class="p-4 md:p-6 border-b border-gray-100">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+
+    <!-- Header -->
+    <div class="p-4 md:p-6 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50">
       <div class="flex items-center justify-between">
-        <h3 class="text-xl md:text-2xl font-bold text-gray-800">Додати продукт</h3>
-        <button onclick="closeNewProductModal()" class="text-gray-400 hover:text-gray-600">
-          <span class="text-2xl">×</span>
+        <div>
+          <h3 class="text-xl md:text-2xl font-bold text-gray-800">Додати новий продукт</h3>
+          <p class="text-sm text-gray-600 mt-1">Заповніть інформацію про новий товар</p>
+        </div>
+        <button onclick="closeNewProductModal()"
+                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"/>
+          </svg>
         </button>
       </div>
     </div>
+
+    <!-- Form Content -->
     <div class="p-4 md:p-6">
       <form method="post" action="{% url 'products:create' %}" enctype="multipart/form-data"
-            class="space-y-4">
+            class="space-y-5">
         {% csrf_token %}
 
+        <!-- Назва -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Назва продукту *</label>
-          <input type="text" name="name" required
-                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+          <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
+            <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+            Назва товару *
+          </label>
+          <input type="text" name="name" required maxlength="255"
+                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                 placeholder="Введіть назву товару">
+          <p class="text-xs text-gray-500 mt-1">Максимум 255 символів. Обов'язкове поле</p>
         </div>
 
+        <!-- Короткий опис -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Опис</label>
-          <textarea name="description" rows="3"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"></textarea>
+          <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
+            <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h7"/>
+            </svg>
+            Короткий опис
+          </label>
+          <textarea name="description" rows="3" maxlength="255"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                    placeholder="Короткий опис товару (необов'язково)"></textarea>
+          <p class="text-xs text-gray-500 mt-1">Максимум 255 символів. Необов'язкове поле</p>
         </div>
 
+        <!-- Категорія -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Категорія *</label>
+          <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
+            <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+            </svg>
+            Категорія *
+          </label>
           <select name="category" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
             <option value="">Оберіть категорію</option>
             {% for category in categories %}
-              <option value="{{ category.id }}">{{ category.emoji }} {{ category.name }}</option>
+              <option value="{{ category.id }}">{{ category.name }}</option>
             {% endfor %}
           </select>
         </div>
 
+        <!-- Ціна та Stock -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Ціна (Decimal 10,2) -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Ціна (₴) *</label>
+            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Ціна (₴) *
+            </label>
             <input type="number" name="price" required min="0" step="0.01" placeholder="0.00"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
           </div>
+
+          <!-- На складі (PositiveInteger) -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Кількість на складі
-              *</label>
-            <input type="number" name="stock" required min="0" placeholder="0"
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+              На складі (шт) *
+            </label>
+            <input type="number" name="stock" id="new_stock" required min="0" step="1"
+                   placeholder="0"
+                   class="w-full px-4 py-2.5 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition bg-green-50">
           </div>
         </div>
 
+        <!-- Зображення (CloudinaryField) -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Зображення</label>
+          <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
+            <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Зображення (Cloudinary)
+          </label>
 
           <!-- Попередній перегляд нового зображення -->
-          <div id="new_product_image_preview" class="hidden mb-3">
+          <div id="new_product_image_preview" class="hidden mb-4">
             <div class="relative">
-              <img id="new_product_preview_img" src="" alt="Preview"
-                   class="w-full h-64 object-cover rounded-lg border-2 border-gray-200">
+              <img id="new_product_preview_img" src="" alt="Нове зображення"
+                   class="w-full h-64 object-cover rounded-lg border-2 border-green-400 shadow-sm">
               <button type="button" onclick="clearNewProductImage()"
-                      class="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition">
-                <span class="text-xl leading-none">×</span>
+                      class="absolute top-3 right-3 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"/>
+                </svg>
               </button>
+              <div
+                  class="absolute bottom-3 left-3 right-3 bg-green-500 bg-opacity-90 backdrop-blur-sm text-white px-3 py-2 rounded-lg">
+                <p class="text-xs font-semibold">✓ Нове зображення</p>
+                <p id="new_product_image_name" class="text-xs opacity-90 truncate"></p>
+              </div>
             </div>
-            <p id="new_product_image_name" class="text-sm text-gray-600 mt-2"></p>
           </div>
 
           <!-- File input -->
           <div class="flex items-center justify-center w-full">
             <label for="new_product_image_input"
-                   class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                   class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-green-50 hover:border-green-300 transition">
               <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor"
+                <svg class="w-12 h-12 mb-3 text-gray-400" fill="none" stroke="currentColor"
                      viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                 </svg>
-                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Натисніть для завантаження</span>
-                  або перетягніть файл</p>
-                <p class="text-xs text-gray-500">PNG, JPG, WEBP (макс. 5MB)</p>
+                <p class="mb-2 text-sm text-gray-600">
+                  <span class="font-semibold text-green-600">Натисніть для завантаження</span>
+                  <span class="text-gray-500"> або перетягніть файл</span>
+                </p>
+                <p class="text-xs text-gray-500">PNG, JPG, WEBP (макс. 5MB) → Cloudinary</p>
               </div>
               <input id="new_product_image_input" type="file" name="image" accept="image/*"
                      onchange="previewNewProductImage(this)" class="hidden">
@@ -88,45 +162,71 @@
           </div>
         </div>
 
+        <!-- Активний товар (Boolean) -->
         <div
-            class="bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg p-4 border border-pink-100">
+            class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-200">
           <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1">
               <label for="new_is_active"
-                     class="text-sm font-medium text-gray-800 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-pink-600" fill="none" stroke="currentColor"
+                     class="text-sm font-medium text-gray-800 flex items-center cursor-pointer">
+                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor"
                      viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                Активний продукт
+                Активний товар
               </label>
-              <p class="text-xs text-gray-600 mt-1 ml-7">Продукт буде доступний для замовлення</p>
+              <p class="text-xs text-gray-600 mt-1 ml-7">Товар буде доступний для замовлення в
+                магазині</p>
+              <p class="text-xs text-gray-500 mt-1 ml-7">За замовчуванням: активний</p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" name="is_active" id="new_is_active" checked
                      class="sr-only peer">
               <div
-                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+                  class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-600 shadow-inner"></div>
             </label>
           </div>
         </div>
 
+        <!-- Info про автоматичні поля -->
+        <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+          <div class="flex items-start space-x-3">
+            <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor"
+                 viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"/>
+            </svg>
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold text-blue-800 mb-1">Автоматично встановлюються:</h4>
+              <ul class="text-xs text-blue-700 space-y-1">
+                <li>• <strong>Продано:</strong> 0 шт</li>
+                <li>• <strong>Рейтинг:</strong> 0.0</li>
+                <li>• <strong>Статус:</strong> автоматично на основі кількості</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
         <div
-            class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4 border-t border-gray-100">
+            class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4 border-t-2 border-gray-100">
           <button type="button" onclick="closeNewProductModal()"
-                  class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">
-            Скасувати
+                  class="px-6 py-3 border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span>Скасувати</span>
           </button>
           <button type="submit"
-                  class="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-lg font-medium transition shadow-lg shadow-pink-500/30">
-            <span class="flex items-center justify-center">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-              </svg>
-              Додати продукт
-            </span>
+                  class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition shadow-lg shadow-green-500/30 flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            <span>Додати продукт</span>
           </button>
         </div>
       </form>

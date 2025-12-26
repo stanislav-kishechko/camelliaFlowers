@@ -1,56 +1,3 @@
-function openNewProductModal() {
-    document.getElementById('newProductModal').classList.remove('hidden');
-}
-
-function closeNewProductModal() {
-    document.getElementById('newProductModal').classList.add('hidden');
-    document.querySelector('#newProductModal form').reset();
-    clearNewProductImage();
-}
-
-function previewNewProductImage(input) {
-    const preview = document.getElementById('new_product_image_preview');
-    const previewImg = document.getElementById('new_product_preview_img');
-    const imageName = document.getElementById('new_product_image_name');
-
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        const file = input.files[0];
-
-        if (file.size > 5 * 1024 * 1024) {
-            alert('Файл занадто великий! Максимальний розмір: 5MB');
-            input.value = '';
-            return;
-        }
-
-        if (!file.type.match('image.*')) {
-            alert('Будь ласка, оберіть файл зображення');
-            input.value = '';
-            return;
-        }
-
-        reader.onload = function (e) {
-            previewImg.src = e.target.result;
-            imageName.textContent = file.name;
-            preview.classList.remove('hidden');
-        };
-
-        reader.readAsDataURL(file);
-    }
-}
-
-function clearNewProductImage() {
-    const input = document.getElementById('new_product_image_input');
-    const preview = document.getElementById('new_product_image_preview');
-    const previewImg = document.getElementById('new_product_preview_img');
-    const imageName = document.getElementById('new_product_image_name');
-
-    input.value = '';
-    previewImg.src = '';
-    imageName.textContent = '';
-    preview.classList.add('hidden');
-}
-
 function openEditProductModal(id, name, description, categoryId, price, stock, isActive, imageUrl, imageName) {
     const modal = document.getElementById('editProductModal');
     const form = document.getElementById('editProductForm');
@@ -61,33 +8,75 @@ function openEditProductModal(id, name, description, categoryId, price, stock, i
     document.getElementById('edit_name').value = name;
     document.getElementById('edit_description').value = description || '';
     document.getElementById('edit_category').value = categoryId;
-    document.getElementById('edit_price').value = price;
+    document.getElementById('edit_price').value = parseFloat(price).toFixed(2);
     document.getElementById('edit_stock').value = stock;
     document.getElementById('edit_is_active').checked = isActive;
 
-    clearEditImage();
-    document.getElementById('remove_image').value = 'false';
+    updateDisplayValues(name, categoryId, price, stock, isActive);
 
-    const currentImageContainer = document.getElementById('current_image_container');
-    const currentImagePreview = document.getElementById('current_image_preview');
-    const currentImageName = document.getElementById('current_image_name');
-
-    if (imageUrl && imageUrl !== 'null') {
-        currentImagePreview.src = imageUrl;
-        currentImageName.textContent = imageName || 'Поточне зображення';
-        currentImageContainer.classList.remove('hidden');
-    } else {
-        currentImageContainer.classList.add('hidden');
-    }
+    handleImageDisplay(imageUrl, imageName);
 
     modal.classList.remove('hidden');
 }
 
+function updateDisplayValues(name, categoryId, price, stock, isActive) {
+    const displayName = document.getElementById('display_name');
+    const displayCategory = document.getElementById('display_category');
+    const displayPrice = document.getElementById('display_price');
+    const displayStock = document.getElementById('display_stock');
+    const displayIsActive = document.getElementById('display_is_active');
+
+    if (displayName) displayName.textContent = name;
+    if (displayPrice) displayPrice.textContent = parseFloat(price).toFixed(2);
+
+    if (displayStock) {
+        displayStock.textContent = stock;
+        if (stock > 10) {
+            displayStock.className = 'font-semibold text-green-600 text-base';
+        } else if (stock > 0) {
+            displayStock.className = 'font-semibold text-yellow-600 text-base';
+        } else {
+            displayStock.className = 'font-semibold text-red-600 text-base';
+        }
+    }
+
+    if (displayIsActive) {
+        displayIsActive.textContent = isActive ? '✅ Активний' : '❌ Неактивний';
+    }
+
+    if (displayCategory) {
+        const categorySelect = document.getElementById('edit_category');
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            displayCategory.textContent = selectedOption.text;
+        }
+    }
+}
+
+function handleImageDisplay(imageUrl, imageName) {
+    const currentImageContainer = document.getElementById('current_image_container');
+    const currentImagePreview = document.getElementById('current_image_preview');
+    const currentImageName = document.getElementById('current_image_name');
+
+    clearEditImage();
+    document.getElementById('remove_image').value = 'false';
+
+    if (imageUrl && imageUrl !== 'null' && imageUrl !== null && imageUrl !== 'undefined' && imageUrl !== '') {
+        console.log('✅ Показуємо Cloudinary зображення');
+        currentImagePreview.src = imageUrl;
+        currentImageName.textContent = imageName || 'Cloudinary зображення';
+        currentImageContainer.classList.remove('hidden');
+    } else {
+        console.log('❌ Зображення відсутнє');
+        currentImageContainer.classList.add('hidden');
+    }
+}
+
 function closeEditProductModal() {
     const modal = document.getElementById('editProductModal');
-    modal.classList.add('hidden');
-
     const form = document.getElementById('editProductForm');
+
+    modal.classList.add('hidden');
     form.reset();
     clearEditImage();
     document.getElementById('remove_image').value = 'false';
@@ -111,7 +100,7 @@ function previewEditImage(input) {
         }
 
         if (!file.type.match('image.*')) {
-            alert('Будь ласка, оберіть файл зображення');
+            alert('Будь ласка, виберіть файл зображення!');
             input.value = '';
             return;
         }
@@ -120,7 +109,10 @@ function previewEditImage(input) {
             previewImg.src = e.target.result;
             imageName.textContent = file.name;
             preview.classList.remove('hidden');
-            currentImageContainer.classList.add('hidden');
+
+            if (currentImageContainer) {
+                currentImageContainer.classList.add('hidden');
+            }
         };
 
         reader.readAsDataURL(file);
@@ -134,67 +126,100 @@ function clearEditImage() {
     const imageName = document.getElementById('edit_image_name');
     const currentImageContainer = document.getElementById('current_image_container');
 
-    input.value = '';
-    previewImg.src = '';
-    imageName.textContent = '';
-    preview.classList.add('hidden');
+    if (input) input.value = '';
+    if (previewImg) previewImg.src = '';
+    if (imageName) imageName.textContent = '';
+    if (preview) preview.classList.add('hidden');
 
     const currentImage = document.getElementById('current_image_preview');
-    if (currentImage.src && document.getElementById('remove_image').value !== 'true') {
-        currentImageContainer.classList.remove('hidden');
+    if (currentImage && currentImage.src && document.getElementById('remove_image').value !== 'true') {
+        if (currentImageContainer) currentImageContainer.classList.remove('hidden');
     }
 }
 
 function removeCurrentImage() {
-    const currentImageContainer = document.getElementById('current_image_container');
-    const removeImageInput = document.getElementById('remove_image');
+    if (confirm('Видалити поточне зображення?')) {
+        const currentImageContainer = document.getElementById('current_image_container');
+        const removeImageInput = document.getElementById('remove_image');
 
-    currentImageContainer.classList.add('hidden');
+        currentImageContainer.classList.add('hidden');
+        removeImageInput.value = 'true';
 
-    removeImageInput.value = 'true';
+    }
+}
 
-    const input = document.getElementById('edit_image_input');
-    input.value = '';
-    clearEditImage();
+function openNewProductModal() {
+    const modal = document.getElementById('newProductModal');
+    modal.classList.remove('hidden');
+}
+
+function closeNewProductModal() {
+    const modal = document.getElementById('newProductModal');
+    const form = modal.querySelector('form');
+
+    modal.classList.add('hidden');
+    form.reset();
+    clearNewProductImage();
+}
+
+function previewNewProductImage(input) {
+    const preview = document.getElementById('new_product_image_preview');
+    const previewImg = document.getElementById('new_product_preview_img');
+    const imageName = document.getElementById('new_product_image_name');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        const file = input.files[0];
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Файл занадто великий! Максимальний розмір: 5MB');
+            input.value = '';
+            return;
+        }
+
+        if (!file.type.match('image.*')) {
+            alert('Будь ласка, виберіть файл зображення!');
+            input.value = '';
+            return;
+        }
+
+        reader.onload = function (e) {
+            previewImg.src = e.target.result;
+            imageName.textContent = file.name;
+            preview.classList.remove('hidden');
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function clearNewProductImage() {
+    const input = document.getElementById('new_product_image_input');
+    const preview = document.getElementById('new_product_image_preview');
+    const previewImg = document.getElementById('new_product_preview_img');
+    const imageName = document.getElementById('new_product_image_name');
+
+    if (input) input.value = '';
+    if (previewImg) previewImg.src = '';
+    if (imageName) imageName.textContent = '';
+    if (preview) preview.classList.add('hidden');
 }
 
 function confirmDelete(productId, productName) {
     const modal = document.getElementById('deleteProductModal');
     const form = document.getElementById('deleteProductForm');
-    const productNameSpan = document.getElementById('delete_product_name');
+    const nameSpan = document.getElementById('delete_product_name');
 
-    form.action = `/products/${productId}/delete/`;
-
-    productNameSpan.textContent = productName;
-
-    modal.classList.remove('hidden');
+    if (modal && form && nameSpan) {
+        form.action = `/products/${productId}/delete/`;
+        nameSpan.textContent = productName;
+        modal.classList.remove('hidden');
+    }
 }
 
-function closeDeleteModal() {
+function closeDeleteProductModal() {
     const modal = document.getElementById('deleteProductModal');
-    modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
 }
-
-window.onclick = function (event) {
-    const newModal = document.getElementById('newProductModal');
-    const editModal = document.getElementById('editProductModal');
-    const deleteModal = document.getElementById('deleteProductModal');
-
-    if (event.target === newModal) {
-        closeNewProductModal();
-    }
-    if (event.target === editModal) {
-        closeEditProductModal();
-    }
-    if (event.target === deleteModal) {
-        closeDeleteModal();
-    }
-};
-
-document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-        closeNewProductModal();
-        closeEditProductModal();
-        closeDeleteModal();
-    }
-});

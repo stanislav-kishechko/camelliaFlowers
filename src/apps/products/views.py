@@ -187,4 +187,6 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
         context["orders_count"] = order_items.count()
         context["total_sold"] = sum(item.quantity for item in order_items)
 
+        context["categories"] = ProductCategory.objects.all()
+
         return context

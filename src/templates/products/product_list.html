@@ -190,7 +190,17 @@
                 Детальніше
               </a>
               <button
-                  onclick="openEditProductModal({{ product.id }}, '{{ product.name|escapejs }}', '{{ product.description|escapejs }}', '{{ product.category.id }}', {{ product.price }}, {{ product.stock }}, {{ product.is_active|yesno:'true,false' }}, {% if product.image %}'{{ product.image.url }}', '{{ product.image.name }}'{% else %}null, null{% endif %})"
+                  onclick="openEditProductModal(
+                      {{ product.id }},
+                      '{{ product.name|escapejs }}',
+                      '{{ product.description|escapejs }}',
+                      {{ product.category.id }},
+                      '{{ product.price }}',
+                      {{ product.stock }},
+                      {{ product.is_active|yesno:'true,false' }},
+                      {% if product.image %}'{{ product.image.url }}'{% else %}null{% endif %},
+                      {% if product.image %}'{{ product.image.name }}'{% else %}null{% endif %}
+                      )"
                   class="px-2 md:px-3 py-2 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition text-xs md:text-sm">
                 ✏️
               </button>
@@ -250,6 +260,7 @@
 
               <!-- Previous Page -->
               <a href="?page=
+
                   {{ page_obj.previous_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
                  class="hidden sm:flex items-center justify-center px-4 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,6 +291,7 @@
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                   <!-- Nearby Pages -->
                   <a href="?page=
+
                       {{ num }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
                      class="hidden md:flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
                     {{ num }}
@@ -287,6 +299,7 @@
                 {% elif num == 1 or num == page_obj.paginator.num_pages %}
                   <!-- First and Last Pages (always visible) -->
                   <a href="?page=
+
                       {{ num }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
                      class="hidden lg:flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
                     {{ num }}
@@ -301,6 +314,7 @@
             <!-- Next Page -->
             {% if page_obj.has_next %}
               <a href="?page=
+
                   {{ page_obj.next_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
                  class="hidden sm:flex items-center justify-center px-4 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
                 Наступна
@@ -312,6 +326,7 @@
 
               <!-- Last Page -->
               <a href="?page=
+
                   {{ page_obj.paginator.num_pages }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
                  class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition"
                  title="Остання сторінка">
@@ -362,6 +377,6 @@
           });
       }
   </script>
-  
+
   <script src="{% static 'js/product_modals.js' %}"></script>
 {% endblock %}
