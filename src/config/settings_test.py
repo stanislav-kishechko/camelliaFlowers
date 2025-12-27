@@ -8,7 +8,6 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
 
-# Use in-memory SQLite database for speed and isolation
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

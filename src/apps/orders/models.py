@@ -161,7 +161,6 @@ class Order(AbstractDatetimeModel):
         return True
 
     def get_status_timeline(self):
-        """Отримання хронології змін статусів"""
         return self.status_history.select_related("changed_by").order_by("created_at")
 
 

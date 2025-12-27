@@ -224,7 +224,6 @@ def update_order_and_product_on_item_save(sender, instance, created, **kwargs):
                     sold=F("sold") + instance.quantity
                 )
             elif quantity_diff != 0:
-                # Тільки кількість змінилась
                 Product.objects.filter(pk=instance.product_id).update(
                     stock=F("stock") - quantity_diff,
                     sold=F("sold") + quantity_diff

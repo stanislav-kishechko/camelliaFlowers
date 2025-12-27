@@ -184,7 +184,6 @@ class ProfileView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-        # Moke data
         user_stats = {
             "sales_count": 142,
             "revenue": "156k",

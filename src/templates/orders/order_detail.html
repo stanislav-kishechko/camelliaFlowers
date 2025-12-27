@@ -6,7 +6,6 @@
 {% block content %}
   <div class="container mx-auto px-4 py-6 max-w-6xl">
 
-    <!-- Хедер -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
       <div class="flex items-center space-x-4">
         <a href="{% url 'orders:orders' %}"
@@ -39,10 +38,8 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- Основна інформація (2 колонки) -->
       <div class="lg:col-span-2 space-y-6">
 
-        <!-- Інформація про клієнта -->
         <div
             class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
           <div class="flex items-center justify-between mb-4">
@@ -84,7 +81,6 @@
           </div>
         </div>
 
-        <!-- Товари -->
         <div
             class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">🛍️ Товари</h2>
@@ -109,7 +105,6 @@
             {% endfor %}
           </div>
 
-          <!-- Загальна сума -->
           <div class="mt-4 pt-4 border-t border-gray-200">
             <div
                 class="flex items-center justify-between p-4 bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl">
@@ -120,7 +115,6 @@
           </div>
         </div>
 
-        <!-- Деталі доставки -->
         <div
             class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">
@@ -129,7 +123,6 @@
 
           <div class="space-y-3">
             {% if order.needs_delivery %}
-              <!-- Інформація про доставку -->
               <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p class="text-sm font-medium text-blue-700">Тип замовлення</p>
                 <p class="font-semibold text-blue-900">Доставка</p>
@@ -153,7 +146,6 @@
                 {% endif %}
               </div>
             {% else %}
-              <!-- Інформація про самовивіз -->
               <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div class="flex items-start space-x-3">
                   <div class="flex-shrink-0">
@@ -181,23 +173,19 @@
         </div>
       </div>
 
-      <!-- Бічна панель -->
       <div class="space-y-6">
 
-        <!-- Статус -->
         <div
             class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">📊 Статус</h2>
 
           <div class="space-y-4">
-            <!-- Поточний статус -->
             <div
                 class="p-4 bg-{{ status_color }}-50 border-2 border-{{ status_color }}-200 rounded-xl">
               <p class="text-sm text-gray-600 mb-1">Поточний статус</p>
               <p class="text-lg font-bold text-{{ status_color }}-700">{{ order.get_status_display }}</p>
             </div>
 
-            <!-- Зміна статусу -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Змінити статус</label>
               <select id="status_select"
@@ -212,7 +200,6 @@
           </div>
         </div>
 
-        <!-- Хронологія статусів -->
         <div
             class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">⏱️ Історія</h2>
@@ -265,7 +252,6 @@
           </div>
         </div>
 
-        <!-- Мета-інформація -->
         <div
             class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">ℹ️ Інформація</h2>

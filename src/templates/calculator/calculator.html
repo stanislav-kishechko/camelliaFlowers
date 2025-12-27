@@ -1,0 +1,722 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Калькулятор композицій - Camellia Flowers</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Styles -->
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+  <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+      body {
+          font-family: 'Montserrat', sans-serif;
+      }
+
+      h1, h2, h3 {
+          font-family: 'Playfair Display', serif;
+      }
+
+      /* Desktop - sidebar always fully open, never collapses */
+      @media (min-width: 1024px) {
+          .sidebar {
+              width: 16rem;
+          }
+
+          .main-content {
+              margin-left: 16rem;
+          }
+      }
+
+      /* Mobile - slides in/out */
+      @media (max-width: 1023px) {
+          .sidebar {
+              width: 16rem;
+              transform: translateX(-100%);
+              transition: transform 0.3s ease;
+          }
+
+          .sidebar.mobile-open {
+              transform: translateX(0);
+          }
+      }
+
+      .flower-card {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+      }
+
+      .flower-card:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(236, 72, 153, 0.2);
+      }
+
+      .flower-card.selected {
+          border: 3px solid #ec4899;
+          box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2);
+      }
+
+      .flower-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+      }
+
+      .flower-card:hover::before {
+          opacity: 1;
+      }
+
+      .quantity-control {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-top: 0.75rem;
+      }
+
+      .quantity-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #ec4899, #db2777);
+          color: white;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          transition: all 0.2s ease;
+      }
+
+      .quantity-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+      }
+
+      .quantity-btn:active {
+          transform: scale(0.95);
+      }
+
+      .quantity-input {
+          width: 60px;
+          text-align: center;
+          border: 2px solid #fce7f3;
+          border-radius: 8px;
+          padding: 0.5rem;
+          font-weight: 600;
+          color: #ec4899;
+      }
+
+      .summary-card {
+          position: sticky;
+          top: 2rem;
+          background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+          border-radius: 24px;
+          padding: 2rem;
+          box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15);
+      }
+
+      .summary-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 0.75rem 0;
+          border-bottom: 1px solid rgba(236, 72, 153, 0.1);
+          animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+          from {
+              opacity: 0;
+              transform: translateX(-20px);
+          }
+          to {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+      .total-price {
+          font-size: 2.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #ec4899, #db2777);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+      }
+
+      .save-btn {
+          background: linear-gradient(135deg, #ec4899, #db2777);
+          color: white;
+          border: none;
+          padding: 1rem 2rem;
+          border-radius: 16px;
+          font-weight: 600;
+          font-size: 1.1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+          width: 100%;
+          margin-top: 1.5rem;
+      }
+
+      .save-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 28px rgba(236, 72, 153, 0.4);
+      }
+
+      .save-btn:active {
+          transform: translateY(0);
+      }
+
+      .category-filter {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+      }
+
+      .category-btn {
+          padding: 0.75rem 1.5rem;
+          border-radius: 12px;
+          border: 2px solid #fce7f3;
+          background: white;
+          color: #6b7280;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-weight: 500;
+      }
+
+      .category-btn:hover {
+          border-color: #ec4899;
+          color: #ec4899;
+      }
+
+      .category-btn.active {
+          background: linear-gradient(135deg, #ec4899, #db2777);
+          color: white;
+          border-color: transparent;
+      }
+
+      .empty-cart {
+          text-align: center;
+          padding: 3rem;
+          color: #9ca3af;
+      }
+
+      .badge {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background: white;
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .badge.in-stock {
+          color: #059669;
+      }
+
+      .badge.low-stock {
+          color: #f59e0b;
+      }
+
+      .badge.out-of-stock {
+          color: #dc2626;
+      }
+
+      .flower-emoji {
+          font-size: 4rem;
+          display: block;
+          margin: 1rem auto;
+          filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+      }
+
+      .price-tag {
+          background: linear-gradient(135deg, #fdf2f8, white);
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          display: inline-block;
+          margin-top: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
+          .summary-card {
+              position: fixed;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              top: auto;
+              border-radius: 24px 24px 0 0;
+              z-index: 100;
+              max-height: 50vh;
+              overflow-y: auto;
+          }
+
+          .main-content {
+              padding-bottom: 400px;
+          }
+      }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gradient-to-br from-pink-50 via-white to-rose-50">
+
+<!-- Mobile Overlay -->
+<div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden"
+     onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<div id="sidebar"
+     class="sidebar fixed inset-y-0 left-0 bg-gradient-to-b from-pink-50 to-white border-r border-pink-100 z-40">
+  <div class="flex flex-col h-full">
+    <!-- Logo -->
+    <div class="p-6 border-b border-pink-100 flex items-center justify-between">
+      <div class="flex items-center space-x-3 overflow-hidden">
+        <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-500 rounded-xl flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-xl">🌸</span>
+        </div>
+        <div class="sidebar-content">
+          <h1 class="text-lg font-bold text-gray-800 whitespace-nowrap">Camellia Flowers</h1>
+          <p class="text-xs text-gray-500">CRM Система</p>
+        </div>
+      </div>
+      <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+      <a href="{% url 'dashboard:dashboard' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-pink-50 rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">📊</span>
+        <span class="sidebar-content whitespace-nowrap">Дашборд</span>
+      </a>
+      <a href="{% url 'orders:orders' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-pink-50 rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">📦</span>
+        <span class="sidebar-content whitespace-nowrap">Замовлення</span>
+      </a>
+      <a href="{% url 'clients:clients' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-pink-50 rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">👥</span>
+        <span class="sidebar-content whitespace-nowrap">Клієнти</span>
+      </a>
+      <a href="{% url 'products:products' %}"
+         class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-pink-50 rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">🌺</span>
+        <span class="sidebar-content whitespace-nowrap">Продукти</span>
+      </a>
+      <a href="#"
+         class="nav-link flex items-center space-x-3 px-4 py-3 bg-pink-100 text-pink-700 rounded-lg transition group">
+        <span class="text-xl flex-shrink-0">🧮</span>
+        <span class="sidebar-content whitespace-nowrap">Калькулятор</span>
+      </a>
+    </nav>
+
+    <!-- User Profile -->
+    <div class="p-4 border-t border-pink-100">
+      <a href="{% url 'accounts:profile' %}"
+         class="flex items-center space-x-3 px-4 py-3 hover:bg-pink-50 rounded-lg transition">
+        <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+          {{ request.user.first_name.0|default:"М" }}{{ request.user.last_name.0|default:"К" }}
+        </div>
+        <div class="sidebar-content flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-800 truncate">{{ request.user.get_full_name|default:"Менеджер" }}</p>
+          <p class="text-xs text-gray-500 truncate">{{ request.user.email|default:"manager@camellia.com" }}</p>
+        </div>
+      </a>
+      <a href="{% url 'logout' %}"
+         class="sidebar-content mt-2 block w-full px-4 py-2 text-sm text-center text-red-600 hover:bg-red-50 rounded-lg transition">
+        Вийти
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Header -->
+<div class="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-20">
+  <div class="flex items-center justify-between p-4">
+    <button onclick="toggleSidebar()" class="text-gray-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <h1 class="text-lg font-bold text-gray-800">Калькулятор</h1>
+    <div class="w-6"></div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div id="main-content" class="main-content pt-16 lg:pt-0 p-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-2">Калькулятор композицій 🌸</h1>
+    <p class="text-gray-600">Створіть ідеальний букет для вашого клієнта</p>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Products Section -->
+    <div class="lg:col-span-2">
+      <!-- Category Filter -->
+      <div class="category-filter">
+        <button class="category-btn active" onclick="filterCategory('all')">
+          Всі квіти
+        </button>
+        <button class="category-btn" onclick="filterCategory('roses')">
+          🌹 Троянди
+        </button>
+        <button class="category-btn" onclick="filterCategory('tulips')">
+          🌷 Тюльпани
+        </button>
+        <button class="category-btn" onclick="filterCategory('orchids')">
+          🌺 Орхідеї
+        </button>
+        <button class="category-btn" onclick="filterCategory('mixed')">
+          💐 Мікс
+        </button>
+      </div>
+
+      <!-- Products Grid -->
+      <div id="products-grid" class="grid md:grid-cols-2 gap-6">
+        <!-- Product Card 1 -->
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="roses" data-id="1" data-price="45">
+          <div class="badge in-stock">В наявності</div>
+          <span class="flower-emoji">🌹</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Червона троянда</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Класична червона троянда</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴45</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(1, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-1" value="0" min="0" readonly>
+            <button class="quantity-btn" onclick="updateQuantity(1, 1)">+</button>
+          </div>
+        </div>
+
+        <!-- Product Card 2 -->
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="tulips" data-id="2" data-price="35">
+          <div class="badge in-stock">В наявності</div>
+          <span class="flower-emoji">🌷</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Рожевий тюльпан</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Ніжний весняний тюльпан</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴35</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(2, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-2" value="0" min="0" readonly>
+            <button class="quantity-btn" onclick="updateQuantity(2, 1)">+</button>
+          </div>
+        </div>
+
+        <!-- Product Card 3 -->
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="orchids" data-id="3" data-price="120">
+          <div class="badge low-stock">Обмежено</div>
+          <span class="flower-emoji">🌺</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Орхідея фаленопсис</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Екзотична орхідея</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴120</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(3, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-3" value="0" min="0" readonly>
+            <button class="quantity-btn" onclick="updateQuantity(3, 1)">+</button>
+          </div>
+        </div>
+
+        <!-- Product Card 4 -->
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="roses" data-id="4" data-price="50">
+          <div class="badge in-stock">В наявності</div>
+          <span class="flower-emoji">🥀</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Піоновидна троянда</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Пишна піоновидна троянда</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴50</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(4, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-4" value="0" min="0" readonly>
+            <button class="quantity-btn" onclick="updateQuantity(4, 1)">+</button>
+          </div>
+        </div>
+
+        <!-- Product Card 5 -->
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="mixed" data-id="5" data-price="30">
+          <div class="badge in-stock">В наявності</div>
+          <span class="flower-emoji">🌼</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Хризантема</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Яскрава хризантема</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴30</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(5, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-5" value="0" min="0" readonly>
+            <button class="quantity-btn"ocking="updateQuantity(5, 1)">+</button>
+          </div>
+        </div>
+
+        <!-- Product Card 6 -->
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="mixed" data-id="6" data-price="40">
+          <div class="badge in-stock">В наявності</div>
+          <span class="flower-emoji">🏵️</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Гербера</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Соняшна гербера</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴40</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(6, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-6" value="0" min="0" readonly>
+            <button class="quantity-btn" onclick="updateQuantity(6, 1)">+</button>
+          </div>
+        </div>
+
+        <!-- Additional Products -->
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="mixed" data-id="7" data-price="25">
+          <div class="badge in-stock">В наявності</div>
+          <span class="flower-emoji">🪻</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Лаванда</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Ароматна лаванда</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴25</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(7, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-7" value="0" min="0" readonly>
+            <button class="quantity-btn" onclick="updateQuantity(7, 1)">+</button>
+          </div>
+        </div>
+
+        <div class="flower-card bg-white rounded-2xl p-6 border-2 border-pink-100" data-category="mixed" data-id="8" data-price="55">
+          <div class="badge in-stock">В наявності</div>
+          <span class="flower-emoji">🌻</span>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Соняшник</h3>
+          <p class="text-gray-500 text-center text-sm mb-3">Великий соняшник</p>
+          <div class="price-tag text-center w-full">
+            <span class="text-2xl font-bold text-pink-600">₴55</span>
+            <span class="text-gray-500 text-sm">/шт</span>
+          </div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="updateQuantity(8, -1)">−</button>
+            <input type="number" class="quantity-input" id="qty-8" value="0" min="0" readonly>
+            <button class="quantity-btn" onclick="updateQuantity(8, 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="lg:col-span-1">
+      <div class="summary-card">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Ваша композиція</h2>
+
+        <div id="summary-items" class="mb-6">
+          <div class="empty-cart">
+            <span style="font-size: 3rem; opacity: 0.3;">🌸</span>
+            <p class="mt-4">Композиція порожня</p>
+            <p class="text-sm">Додайте квіти для розрахунку</p>
+          </div>
+        </div>
+
+        <div class="border-t-2 border-pink-200 pt-4 mt-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600">Всього квітів:</span>
+            <span class="font-semibold text-gray-800" id="total-items">0</span>
+          </div>
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-gray-600">Упаковка:</span>
+            <span class="font-semibold text-gray-800">₴50</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xl font-bold text-gray-800">Загалом:</span>
+            <span class="total-price" id="total-price">₴0</span>
+          </div>
+        </div>
+
+        <button class="save-btn" onclick="saveComposition()">
+          💾 Зберегти композицію
+        </button>
+
+        <button class="save-btn" style="background: linear-gradient(135deg, #6b7280, #4b5563); margin-top: 0.5rem;" onclick="clearAll()">
+          🗑️ Очистити все
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  let cart = {};
+  const packagingCost = 50;
+
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobile-overlay');
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('hidden');
+  }
+
+  function updateQuantity(productId, change) {
+    const input = document.getElementById(`qty-${productId}`);
+    let currentValue = parseInt(input.value) || 0;
+    let newValue = Math.max(0, currentValue + change);
+
+    input.value = newValue;
+
+    const card = document.querySelector(`[data-id="${productId}"]`);
+    const productName = card.querySelector('h3').textContent;
+    const productPrice = parseInt(card.dataset.price);
+
+    if (newValue > 0) {
+      cart[productId] = {
+        name: productName,
+        price: productPrice,
+        quantity: newValue
+      };
+      card.classList.add('selected');
+    } else {
+      delete cart[productId];
+      card.classList.remove('selected');
+    }
+
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const summaryItems = document.getElementById('summary-items');
+    const totalItemsEl = document.getElementById('total-items');
+    const totalPriceEl = document.getElementById('total-price');
+
+    if (Object.keys(cart).length === 0) {
+      summaryItems.innerHTML = `
+        <div class="empty-cart">
+          <span style="font-size: 3rem; opacity: 0.3;">🌸</span>
+          <p class="mt-4">Композиція порожня</p>
+          <p class="text-sm">Додайте квіти для розрахунку</p>
+        </div>
+      `;
+      totalItemsEl.textContent = '0';
+      totalPriceEl.textContent = '₴0';
+      return;
+    }
+
+    let html = '';
+    let totalItems = 0;
+    let totalPrice = 0;
+
+    for (const [id, item] of Object.entries(cart)) {
+      const itemTotal = item.price * item.quantity;
+      totalItems += item.quantity;
+      totalPrice += itemTotal;
+
+      html += `
+        <div class="summary-item">
+          <div>
+            <div class="font-semibold text-gray-800">${item.name}</div>
+            <div class="text-sm text-gray-500">${item.quantity} шт × ₴${item.price}</div>
+          </div>
+          <div class="font-bold text-pink-600">₴${itemTotal}</div>
+        </div>
+      `;
+    }
+
+    summaryItems.innerHTML = html;
+    totalItemsEl.textContent = totalItems;
+    totalPriceEl.textContent = `₴${totalPrice + packagingCost}`;
+  }
+
+  function filterCategory(category) {
+    const buttons = document.querySelectorAll('.category-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const cards = document.querySelectorAll('.flower-card');
+    cards.forEach(card => {
+      if (category === 'all' || card.dataset.category === category) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  function saveComposition() {
+    if (Object.keys(cart).length === 0) {
+      alert('Додайте квіти до композиції перед збереженням!');
+      return;
+    }
+
+    const composition = {
+      items: cart,
+      totalPrice: calculateTotal(),
+      packagingCost: packagingCost,
+      createdAt: new Date().toISOString()
+    };
+
+    console.log('Збережено композицію:', composition);
+    alert('Композицію успішно збережено! 🌸\n\nЗагальна вартість: ₴' + (calculateTotal() + packagingCost));
+
+    // Тут можна додати AJAX запит для збереження в базу даних
+    // fetch('/api/compositions/', {
+    //   method: 'POST',
+    //   headers: {'Content-Type': 'application/json'},
+    //   body: JSON.stringify(composition)
+    // });
+  }
+
+  function clearAll() {
+    if (confirm('Ви впевнені, що хочете очистити всю композицію?')) {
+      cart = {};
+      document.querySelectorAll('.quantity-input').forEach(input => {
+        input.value = 0;
+      });
+      document.querySelectorAll('.flower-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      updateSummary();
+    }
+  }
+
+  function calculateTotal() {
+    let total = 0;
+    for (const item of Object.values(cart)) {
+      total += item.price * item.quantity;
+    }
+    return total;
+  }
+</script>
+
+</body>
+</html>

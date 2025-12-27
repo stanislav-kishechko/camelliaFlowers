@@ -17,7 +17,6 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* Wilting animation for sad flower */
         @keyframes wilt {
             0%, 100% { transform: rotate(0deg) translateY(0px); }
             50% { transform: rotate(-15deg) translateY(5px); }
@@ -28,7 +27,6 @@
             filter: grayscale(0.3);
         }
 
-        /* Glitch effect for 500 */
         @keyframes glitch {
             0% {
                 transform: translate(0);
@@ -61,7 +59,6 @@
             animation: glitch 2s infinite;
         }
 
-        /* Pulse animation for alert */
         @keyframes pulse-glow {
             0%, 100% {
                 box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
@@ -75,7 +72,6 @@
             animation: pulse-glow 2s ease-in-out infinite;
         }
 
-        /* Rain drops effect */
         @keyframes rainFall {
             0% {
                 transform: translateY(-100vh);
@@ -102,14 +98,12 @@
         .raindrop:nth-child(5) { left: 70%; animation-duration: 1.3s; animation-delay: 0.5s; }
         .raindrop:nth-child(6) { left: 85%; animation-duration: 1s; animation-delay: 0.8s; }
 
-        /* Glass morphism */
         .glass {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Gradient text for error code */
         .error-gradient {
             background: linear-gradient(135deg, #ef4444, #f97316, #fbbf24);
             -webkit-background-clip: text;
@@ -120,7 +114,6 @@
 </head>
 <body class="bg-gradient-to-br from-slate-100 via-gray-100 to-blue-50 min-h-screen overflow-hidden relative">
 
-    <!-- Rain effect -->
     <div class="raindrop"></div>
     <div class="raindrop"></div>
     <div class="raindrop"></div>
@@ -131,40 +124,33 @@
     <div class="min-h-screen flex items-center justify-center p-4 relative z-10">
         <div class="max-w-2xl w-full">
 
-            <!-- Main content -->
             <div class="glass rounded-3xl shadow-2xl p-8 md:p-12 text-center">
 
-                <!-- Alert icon with pulse -->
                 <div class="flex justify-center mb-8">
                     <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center pulse-alert">
                         <span class="text-5xl">⚠️</span>
                     </div>
                 </div>
 
-                <!-- Wilting flower decoration -->
                 <div class="flex justify-center gap-3 mb-6">
                     <span class="wilt-flower text-5xl opacity-70">🥀</span>
                     <span class="wilt-flower text-6xl opacity-90" style="animation-delay: 0.5s;">🥀</span>
                     <span class="wilt-flower text-5xl opacity-70" style="animation-delay: 1s;">🥀</span>
                 </div>
 
-                <!-- 500 Number with glitch -->
                 <h1 class="glitch text-8xl md:text-[10rem] font-bold error-gradient leading-none mb-4">
                     500
                 </h1>
 
-                <!-- Title -->
                 <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">
                     Ой! Наші квіти зів'яли...
                 </h2>
 
-                <!-- Description -->
                 <p class="text-gray-600 text-lg mb-6 max-w-md mx-auto">
                     Виникла несподівана помилка на сервері. Наші садівники вже працюють над тим,
                     щоб відновити красу вашого саду! 🌱
                 </p>
 
-                <!-- Technical info box -->
                 <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-8 text-left max-w-md mx-auto">
                     <div class="flex items-start gap-3">
                         <span class="text-2xl flex-shrink-0">🔧</span>
@@ -177,7 +163,6 @@
                     </div>
                 </div>
 
-                <!-- Action buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                     <button
                         onclick="location.reload()"
@@ -195,7 +180,6 @@
                     </a>
                 </div>
 
-                <!-- Help section -->
                 <div class="pt-8 border-t border-gray-200">
                     <p class="text-sm text-gray-600 mb-4">
                         Якщо проблема не зникає, зверніться до нашої служби підтримки:
@@ -217,23 +201,20 @@
                     </div>
                 </div>
 
-                <!-- Status info -->
                 <div class="mt-6 text-xs text-gray-500">
                     Код помилки: 500 | Час: <span id="error-time"></span>
                 </div>
             </div>
 
-            <!-- Footer -->
             <div class="text-center mt-8">
                 <p class="text-sm text-gray-500">
-                    © 2024 Camellia Flowers CRM. Ми повернемось скоро! 🌸
+                    © 2025 Camellia Flowers CRM. Ми повернемось скоро! 🌸
                 </p>
             </div>
         </div>
     </div>
 
     <script>
-        // Display current time
         document.getElementById('error-time').textContent = new Date().toLocaleTimeString('uk-UA');
     </script>
 

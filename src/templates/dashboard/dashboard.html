@@ -11,7 +11,6 @@
 
 {% block content %}
   <div class="p-4 md:p-8">
-    <!-- Header with Period Switcher -->
     <div class="mb-6 md:mb-8">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -19,7 +18,6 @@
           <p class="text-gray-500 mt-1 text-sm md:text-base">Огляд продажів та замовлень</p>
         </div>
 
-        <!-- Period Switcher -->
         <div class="flex gap-2">
           <button onclick="changePeriod('day')"
                   class="period-btn px-4 py-2 rounded-lg text-sm font-medium transition {% if current_period == 'day' %}bg-pink-500 text-white{% else %}bg-white text-gray-600 hover:bg-gray-50{% endif %}"
@@ -45,9 +43,7 @@
       </div>
     </div>
 
-    <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-      <!-- Card 1 - Sales Today -->
       <div
           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
         <div class="flex items-center justify-between mb-3 md:mb-4">
@@ -66,7 +62,6 @@
         </p>
       </div>
 
-      <!-- Card 2 - Active Orders -->
       <div
           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
         <div class="flex items-center justify-between mb-3 md:mb-4">
@@ -84,7 +79,6 @@
         </p>
       </div>
 
-      <!-- Card 3 - Clients -->
       <div
           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
         <div class="flex items-center justify-between mb-3 md:mb-4">
@@ -102,7 +96,6 @@
         </p>
       </div>
 
-      <!-- Card 4 - Average Check -->
       <div
           class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 hover:shadow-md transition">
         <div class="flex items-center justify-between mb-3 md:mb-4">
@@ -121,9 +114,7 @@
       </div>
     </div>
 
-    <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-      <!-- Sales Chart -->
       <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
         <div class="flex items-center justify-between mb-4 md:mb-6">
           <div>
@@ -146,7 +137,6 @@
         </div>
       </div>
 
-      <!-- Top Products -->
       <div
           class="bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl shadow-sm p-4 md:p-6 text-white">
         <h3 class="text-base md:text-lg font-semibold mb-4 md:mb-6">
@@ -172,7 +162,6 @@
       </div>
     </div>
 
-    <!-- Recent Orders Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="p-4 md:p-6 border-b border-gray-100">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

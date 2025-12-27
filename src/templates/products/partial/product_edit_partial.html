@@ -2,7 +2,6 @@
      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
   <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
 
-    <!-- Header -->
     <div class="p-4 md:p-6 border-b border-gray-100 bg-gradient-to-r from-pink-50 to-purple-50">
       <div class="flex items-center justify-between">
         <div>
@@ -19,14 +18,12 @@
       </div>
     </div>
 
-    <!-- Form Content -->
     <div class="p-4 md:p-6">
       <form method="post" id="editProductForm" enctype="multipart/form-data" class="space-y-5">
         {% csrf_token %}
         <input type="hidden" name="_method" value="PUT">
         <input type="hidden" id="edit_product_id" name="product_id">
 
-        <!-- Назва -->
         <div>
           <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
             <svg class="w-4 h-4 mr-2 text-pink-500" fill="none" stroke="currentColor"
@@ -45,7 +42,6 @@
           </p>
         </div>
 
-        <!-- Короткий опис -->
         <div>
           <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
             <svg class="w-4 h-4 mr-2 text-pink-500" fill="none" stroke="currentColor"
@@ -61,7 +57,6 @@
           <p class="text-xs text-gray-500 mt-1">Максимум 255 символів. Необов'язкове поле</p>
         </div>
 
-        <!-- Категорія -->
         <div>
           <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
             <svg class="w-4 h-4 mr-2 text-pink-500" fill="none" stroke="currentColor"
@@ -83,9 +78,7 @@
           </p>
         </div>
 
-        <!-- Ціна та Stock -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Ціна (Decimal 10,2) -->
           <div>
             <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
               <svg class="w-4 h-4 mr-2 text-pink-500" fill="none" stroke="currentColor"
@@ -122,7 +115,6 @@
           </div>
         </div>
 
-        <!-- Зображення (CloudinaryField) -->
         <div>
           <label class="flex items-center text-sm font-medium text-gray-700 mb-2">
             <svg class="w-4 h-4 mr-2 text-pink-500" fill="none" stroke="currentColor"
@@ -133,7 +125,6 @@
             Зображення (Cloudinary)
           </label>
 
-          <!-- Поточне зображення -->
           <div id="current_image_container" class="hidden mb-4">
             <div class="relative group">
               <img id="current_image_preview" src="" alt="Поточне зображення"
@@ -156,7 +147,6 @@
             </div>
           </div>
 
-          <!-- Попередній перегляд нового зображення -->
           <div id="edit_image_preview" class="hidden mb-4">
             <div class="relative">
               <img id="edit_preview_img" src="" alt="Нове зображення"
@@ -176,7 +166,6 @@
             </div>
           </div>
 
-          <!-- File input -->
           <div class="flex items-center justify-center w-full">
             <label for="edit_image_input"
                    class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-pink-50 hover:border-pink-300 transition">
@@ -200,7 +189,6 @@
           <input type="hidden" id="remove_image" name="remove_image" value="false">
         </div>
 
-        <!-- Активний товар (Boolean) -->
         <div
             class="bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-5 border border-pink-200">
           <div class="flex items-center justify-between">
@@ -228,7 +216,6 @@
           </div>
         </div>
 
-        <!-- Buttons -->
         <div
             class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-4 border-t-2 border-gray-100">
           <button type="button" onclick="closeEditProductModal()"

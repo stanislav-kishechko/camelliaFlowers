@@ -131,7 +131,7 @@ class TestClientManager:
     def test_by_type_new(self, sample_clients):
         """Test filtering by new client type (created in last 30 days)."""
         results = Client.objects.by_type("new")
-        # All sample clients are just created, so all should be "new"
+
         assert results.count() == 5
 
     def test_by_type_invalid(self, sample_clients):
@@ -148,8 +148,8 @@ class TestClientManager:
     def test_sort_by_orders(self, sample_clients):
         """Test sorting clients by orders count."""
         results = list(Client.objects.sort_by("orders"))
-        assert results[0].orders_count == 10  # VIP with most orders
-        assert results[-1].orders_count == 0  # Client without orders
+        assert results[0].orders_count == 10
+        assert results[-1].orders_count == 0
 
     def test_sort_by_spent(self, sample_clients):
         """Test sorting clients by total spent."""
@@ -160,13 +160,13 @@ class TestClientManager:
     def test_sort_by_date(self, sample_clients):
         """Test sorting clients by creation date."""
         results = list(Client.objects.sort_by("date"))
-        # Should be ordered by most recent first
+
         assert results[0].created_at >= results[-1].created_at
 
     def test_sort_by_invalid(self, sample_clients):
         """Test that invalid sort option defaults to date."""
         results = list(Client.objects.sort_by("invalid"))
-        # Should default to date ordering
+
         assert results[0].created_at >= results[-1].created_at
 
     def test_active_filter(self, sample_clients):
@@ -202,7 +202,7 @@ class TestClientManager:
     def test_top_buyers_default_limit(self, sample_clients):
         """Test top_buyers() with default limit."""
         results = list(Client.objects.top_buyers())
-        # Should return clients ordered by total_spent descending
+
         assert len(results) <= 10
         assert results[0].total_spent >= results[-1].total_spent
 
@@ -221,7 +221,7 @@ class TestClientManager:
     def test_recent_default_days(self, sample_clients):
         """Test recent() with default 30 days."""
         results = Client.objects.recent()
-        # All sample clients are just created
+
         assert results.count() == 5
 
     def test_recent_custom_days(self, sample_clients):
@@ -231,7 +231,7 @@ class TestClientManager:
 
     def test_recent_old_clients(self):
         """Test that old clients are not included in recent()."""
-        # Create a client with old creation date
+
         old_date = timezone.now() - timedelta(days=60)
         old_client = Client.objects.create(
             first_name="Старий",

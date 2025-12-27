@@ -7,7 +7,6 @@
 
 {% block content %}
   <div class="p-4 md:p-8">
-    <!-- Header -->
     <div class="mb-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -22,7 +21,6 @@
       </div>
     </div>
 
-    <!-- Filters and View Toggle -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div class="flex flex-col sm:flex-row gap-3 flex-1">
@@ -75,9 +73,7 @@
       </div>
     </div>
 
-    <!-- Kanban View -->
     <div id="orders-kanban" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
-      <!-- New Orders Column -->
       <div>
         <div class="bg-gray-100 rounded-t-xl px-4 py-3 flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -96,7 +92,6 @@
         </div>
       </div>
 
-      <!-- Processing Orders Column -->
       <div>
         <div class="bg-yellow-50 rounded-t-xl px-4 py-3 flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -115,7 +110,6 @@
         </div>
       </div>
 
-      <!-- Delivery Orders Column -->
       <div>
         <div class="bg-blue-50 rounded-t-xl px-4 py-3 flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -134,7 +128,6 @@
         </div>
       </div>
 
-      <!-- Completed Orders Column -->
       <div>
         <div class="bg-green-50 rounded-t-xl px-4 py-3 flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -154,7 +147,6 @@
       </div>
     </div>
 
-    <!-- Table View -->
     <div id="orders-table"
          class="hidden bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="overflow-x-auto">
@@ -219,7 +211,6 @@
         </table>
       </div>
 
-      <!-- Pagination -->
       {% if is_paginated %}
         <div
             class="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-gray-100 gap-4">

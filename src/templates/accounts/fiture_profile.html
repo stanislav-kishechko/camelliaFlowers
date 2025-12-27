@@ -7,7 +7,6 @@
 
 {% block content %}
   <div class="p-4 md:p-8">
-    <!-- Header -->
     <div class="mb-6">
       <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Профіль користувача</h2>
       <p class="text-gray-500 mt-1 text-sm md:text-base">Управління обліковим записом та
@@ -15,7 +14,6 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-      <!-- Profile Card -->
       <div class="lg:col-span-1">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
           <div class="text-center mb-6">
@@ -87,10 +85,8 @@
         </div>
       </div>
 
-      <!-- Settings Tabs -->
       <div class="lg:col-span-2">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-          <!-- Tabs -->
           <div class="border-b border-gray-100 overflow-x-auto">
             <div class="flex space-x-4 md:space-x-8 px-4 md:px-6 min-w-max">
               <button onclick="showTab('personal')" id="tab-personal"
@@ -112,7 +108,6 @@
             </div>
           </div>
 
-          <!-- Personal Information Tab -->
           <div id="content-personal" class="p-4 md:p-6">
             <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Персональна
               інформація</h3>
@@ -182,7 +177,6 @@
             </form>
           </div>
 
-          <!-- Security Tab -->
           <div id="content-security" class="p-4 md:p-6 hidden">
             <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Безпека
               облікового запису</h3>
@@ -257,7 +251,6 @@
             </div>
           </div>
 
-          <!-- Notifications Tab -->
           <div id="content-notifications" class="p-4 md:p-6 hidden">
             <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Налаштування
               сповіщень</h3>
@@ -310,7 +303,6 @@
             </form>
           </div>
 
-          <!-- Preferences Tab -->
           <div id="content-preferences" class="p-4 md:p-6 hidden">
             <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-4 md:mb-6">Налаштування
               системи</h3>

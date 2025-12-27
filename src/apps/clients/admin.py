@@ -8,5 +8,4 @@ from django.contrib import admin
 
 from apps.clients.models import Client
 
-# Simple registration of the Client model in the admin site.
 admin.site.register(Client)

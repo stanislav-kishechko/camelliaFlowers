@@ -194,21 +194,11 @@ function handleDrop(e) {
     if (draggedElement && draggedElement !== this) {
         this.appendChild(draggedElement);
 
-        // Here you can add HTMX request to update order status
-        // Example:
-        // const orderId = draggedElement.dataset.orderId;
-        // const newStatus = this.dataset.status;
-        // htmx.ajax('POST', `/orders/${orderId}/update-status/`, {values: {status: newStatus}});
-
         showToast('Статус замовлення оновлено', 'success');
     }
 
     return false;
 }
-
-// ==========================================
-// TOAST NOTIFICATIONS
-// ==========================================
 
 function showToast(message, type = 'info', duration = 3000) {
     const toast = document.createElement('div');
@@ -237,10 +227,6 @@ function showToast(message, type = 'info', duration = 3000) {
     }, duration);
 }
 
-// ==========================================
-// FORM VALIDATION
-// ==========================================
-
 function validateForm(formId) {
     const form = document.getElementById(formId);
     if (!form) return true;
@@ -253,7 +239,6 @@ function validateForm(formId) {
             isValid = false;
             field.classList.add('border-red-500');
 
-            // Show error message
             let errorMsg = field.parentElement.querySelector('.error-message');
             if (!errorMsg) {
                 errorMsg = document.createElement('p');
@@ -273,7 +258,6 @@ function validateForm(formId) {
     return isValid;
 }
 
-// Remove error styling on input
 document.addEventListener('input', function(e) {
     if (e.target.hasAttribute('required')) {
         e.target.classList.remove('border-red-500');
@@ -283,10 +267,6 @@ document.addEventListener('input', function(e) {
         }
     }
 });
-
-// ==========================================
-// SEARCH FUNCTIONALITY
-// ==========================================
 
 function initSearch(inputId, targetClass) {
     const searchInput = document.getElementById(inputId);
@@ -336,7 +316,6 @@ document.addEventListener('htmx:afterRequest', function() {
     hideLoading();
 });
 
-// Show toast on HTMX success
 document.addEventListener('htmx:afterOnLoad', function(event) {
     try {
         const xhr = event.detail.xhr;

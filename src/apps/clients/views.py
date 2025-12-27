@@ -96,7 +96,7 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
         """
         context: dict[str, Any] = super().get_context_data(**kwargs)
 
-        client: Client = self.get_object()  # type: ignore[assignment]
+        client: Client = self.get_object()
 
         all_orders = client.orders.select_related().order_by("-created_at")
 

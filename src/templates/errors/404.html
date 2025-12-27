@@ -17,7 +17,6 @@
           font-family: 'Playfair Display', serif;
       }
 
-      /* Floating animation for flowers */
       @keyframes float {
           0%, 100% {
               transform: translateY(0px) rotate(0deg);
@@ -47,7 +46,6 @@
           animation-duration: 8s;
       }
 
-      /* Petal animation */
       @keyframes petalFall {
           0% {
               transform: translateY(-100vh) rotate(0deg);
@@ -99,7 +97,6 @@
           animation-delay: 3s;
       }
 
-      /* Gradient text */
       .gradient-text {
           background: linear-gradient(135deg, #ec4899, #f472b6, #fbbf24);
           -webkit-background-clip: text;
@@ -107,7 +104,6 @@
           background-clip: text;
       }
 
-      /* Glass morphism */
       .glass {
           background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(10px);
@@ -118,7 +114,6 @@
 <body
     class="bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 min-h-screen overflow-hidden relative">
 
-<!-- Falling petals -->
 <div class="petal"></div>
 <div class="petal"></div>
 <div class="petal"></div>
@@ -128,33 +123,27 @@
 <div class="min-h-screen flex items-center justify-center p-4 relative z-10">
   <div class="max-w-2xl w-full">
 
-    <!-- Main content -->
     <div class="glass rounded-3xl shadow-2xl p-8 md:p-12 text-center">
 
-      <!-- Floating flowers decoration -->
       <div class="flex justify-center gap-4 mb-8">
         <div class="float-flower text-6xl">🌸</div>
         <div class="float-flower text-7xl">🌺</div>
         <div class="float-flower text-6xl">🌷</div>
       </div>
 
-      <!-- 404 Number -->
       <h1 class="text-9xl md:text-[12rem] font-bold gradient-text leading-none mb-4">
         404
       </h1>
 
-      <!-- Title -->
       <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">
         Ой! Квіточка загубилась
       </h2>
 
-      <!-- Description -->
       <p class="text-gray-600 text-lg mb-8 max-w-md mx-auto">
         Схоже, що ця сторінка віднесена вітром... або просто не існує.
         Але не переживайте, ми допоможемо вам знайти потрібний шлях! 🌿
       </p>
 
-      <!-- Action buttons -->
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <a
             href="{% url 'dashboard:dashboard' %}"
@@ -173,7 +162,6 @@
         </button>
       </div>
 
-      <!-- Helpful links -->
       <div class="mt-12 pt-8 border-t border-gray-200">
         <p class="text-sm text-gray-500 mb-4">Можливо, ви шукали:</p>
         <div class="flex flex-wrap justify-center gap-3">
@@ -194,7 +182,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="text-center mt-8">
       <p class="text-sm text-gray-500">
         © 2025 Camellia Flowers CRM. З любов'ю до квітів 🌸

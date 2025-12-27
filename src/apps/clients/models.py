@@ -41,7 +41,7 @@ class Client(AbstractDatetimeModel):
             models.Index(fields=["-created_at"]),
         ]
 
-    def __str__(self) -> str:  # pragma: no cover - presentation only
+    def __str__(self) -> str:
         return self.full_name
 
     @property

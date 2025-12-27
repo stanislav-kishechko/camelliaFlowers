@@ -1,8 +1,6 @@
-<!-- Pagination Component -->
 {% if page_obj.has_other_pages %}
   <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6">
     <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
-      <!-- Info Section -->
       <div class="flex items-center space-x-3">
         <div class="flex items-center justify-center w-10 h-10 bg-pink-50 rounded-lg">
           <span class="text-pink-600 font-semibold">{{ page_obj.number }}</span>
@@ -18,9 +16,7 @@
         </div>
       </div>
 
-      <!-- Navigation Section -->
       <div class="flex items-center space-x-2">
-        <!-- First Page -->
         {% if page_obj.has_previous %}
           <a href="?page=1{% if query_params %}{{ query_params }}{% endif %}"
              class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition group"
@@ -31,7 +27,6 @@
             </svg>
           </a>
 
-          <!-- Previous Page -->
           <a href="?page=
               {{ page_obj.previous_page_number }}{% if query_params %}{{ query_params }}{% endif %}"
              class="hidden sm:flex items-center justify-center px-4 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 transition font-medium text-sm">
@@ -51,36 +46,30 @@
           </span>
         {% endif %}
 
-        <!-- Page Numbers -->
         <div class="flex items-center space-x-1">
           {% for num in page_obj.paginator.page_range %}
             {% if num == page_obj.number %}
-              <!-- Current Page -->
               <span
                   class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-pink-600 text-white font-semibold shadow-lg shadow-pink-500/30">
                 {{ num }}
               </span>
             {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-              <!-- Nearby Pages -->
               <a href="?page={{ num }}{% if query_params %}{{ query_params }}{% endif %}"
                  class="hidden md:flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
                 {{ num }}
               </a>
             {% elif num == 1 or num == page_obj.paginator.num_pages %}
-              <!-- First and Last Pages (always visible) -->
               <a href="?page={{ num }}{% if query_params %}{{ query_params }}{% endif %}"
                  class="hidden lg:flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-gray-700 hover:text-pink-600 transition font-medium">
                 {{ num }}
               </a>
             {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
-              <!-- Ellipsis -->
               <span
                   class="hidden lg:flex items-center justify-center w-10 h-10 text-gray-400">...</span>
             {% endif %}
           {% endfor %}
         </div>
 
-        <!-- Next Page -->
         {% if page_obj.has_next %}
           <a href="?page=
               {{ page_obj.next_page_number }}{% if query_params %}{{ query_params }}{% endif %}"
@@ -92,7 +81,6 @@
             </svg>
           </a>
 
-          <!-- Last Page -->
           <a href="?page=
               {{ page_obj.paginator.num_pages }}{% if query_params %}{{ query_params }}{% endif %}"
              class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition"

@@ -1,9 +1,7 @@
-<!-- Покращене модальне вікно видалення замовлення -->
 <div id="deleteOrderModal"
      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-all duration-300">
   <div
       class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-95 hover:scale-100">
-    <!-- Header -->
     <div class="p-6 border-b border-gray-100">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -25,10 +23,8 @@
       </div>
     </div>
 
-    <!-- Body -->
     <div class="p-6">
       <div class="text-center mb-6">
-        <!-- Animated Warning Icon -->
         <div class="relative inline-block mb-4">
           <div class="absolute inset-0 bg-red-200 rounded-full animate-ping opacity-75"></div>
           <div
@@ -43,7 +39,6 @@
         <p class="text-lg text-gray-700 mb-2 font-semibold">Ви впевнені?</p>
         <p class="text-sm text-gray-500 mb-4">Ця дія незворотна і видалить усі дані замовлення</p>
 
-        <!-- Order Info Card -->
         <div id="delete_order_info"
              class="mt-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 text-left">
           <div class="space-y-2">
@@ -58,7 +53,6 @@
           </div>
         </div>
 
-        <!-- Warning Alert -->
         <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
           <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor"
                viewBox="0 0 20 20">
@@ -70,7 +64,6 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
       <form method="post" id="deleteOrderForm" class="space-y-3">
         {% csrf_token %}
         <div class="flex flex-col sm:flex-row gap-3">

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "cloudinary",
 
+    "apps.dashboard",
     "apps.products",
     "apps.accounts",
     "apps.clients",
@@ -62,6 +63,14 @@ TEMPLATES = [
     },
 ]
 
+MIGRATION_MODULES = {
+    "accounts": "migrations.accounts",
+    "clients": "migrations.clients",
+    "dashboard": "migrations.dashboard",
+    "orders": "migrations.orders",
+    "products": "migrations.products",
+}
+
 WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
@@ -75,37 +84,37 @@ DATABASES = {
     }
 }
 
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 8,
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 8,
         }
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = "accounts.User"
 
-LOGIN_URL = 'accounts:login'
-LOGIN_REDIRECT_URL = 'dashboard:dashboard'
-LOGOUT_REDIRECT_URL = 'accounts:login'
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "dashboard:dashboard"
+LOGOUT_REDIRECT_URL = "accounts:login"
 
 LANGUAGE_CODE = "uk"
 
-TIME_ZONE = 'Europe/Kyiv'
+TIME_ZONE = "Europe/Kyiv"
 
 USE_I18N = True
 

@@ -19,7 +19,7 @@ class TestOrderViews:
         url = reverse("orders:orders")
         resp = client.get(url)
         assert resp.status_code == 200
-        # Перевіряємо, що базові ключі контексту існують
+
         ctx = resp.context
         for key in [
             "new_orders",
@@ -40,7 +40,6 @@ class TestOrderViews:
         resp = client.get(url)
         assert resp.status_code == 200
         available_statuses = resp.context["available_statuses"]
-        # Із NEW можна перейти у PROCESSING або CANCELLED
         target_values = {s for s, _ in available_statuses}
         assert OrderStatusEnum.PROCESSING in target_values
         assert OrderStatusEnum.CANCELLED in target_values
@@ -50,10 +49,10 @@ class TestOrderViews:
         url = reverse("orders:order_delete", args=[order.pk])
         resp = client.post(url, follow=True)
         assert resp.status_code == 200
-        # Переконатись, що замовлення видалено
+
         from apps.orders.models import Order
 
         assert not Order.objects.filter(pk=order.pk).exists()
-        # Перевірити повідомлення
+
         messages = list(get_messages(resp.wsgi_request))
         assert any("успішно видалено" in m.message for m in messages)
